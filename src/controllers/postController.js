@@ -1,6 +1,6 @@
 "use strict";
 
-const Post = require("../models/Post");
+const Post = require("../models/post");
 
 const postController = {
   uploadPost: async (req, res) => {

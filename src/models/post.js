@@ -1,6 +1,6 @@
 "use strict";
 
-const PostStorage = require("./PostStorage");
+const PostStorage = require("./postStorage");
 const UserClient = require("../utils/userClient");
 
 class Post {
