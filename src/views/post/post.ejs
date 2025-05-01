@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>게시글 모아보기 - ÜniÜnity</title>
+    <!-- Favicon-->
+    <link rel="icon" href="/assets/favicon.ico">
+    <!-- Bootstrap icons-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet"
+        type="text/css" />
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap"
+        rel="stylesheet">
+    <link href="/css/home/mainpage.css" rel="stylesheet" />
+    <link href="/css/post/post.css" rel="stylesheet" />
+</head>
+
+<body>
+    <nav class="navbar static-top mt-2">
+        <div class="container">
+            <a class="navbar-brand" id="navbar-brand"><strong style="font-size: 30px;">ÜniÜnity</strong></a>
+
+            <div class="d-grid gap-2 d-md-block">
+                <a class="btn btn-primary" href="#" id="loginStatusBtn">로그인</a>
+                <a class="btn btn-primary" href="#" id="signUpBtn">회원가입</a>
+                <a class="btn btn-primary" href="#" id="backBtn">뒤로가기</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page header with logo and tagline-->
+    <header class="py-5 border-bottom mb-4">
+        <div class="container">
+            <div class="text-center my-5">
+                <h1 class="fw-bolder" id="university_name">Unity</h1>
+                <p class="lead mb-0">대학교 인근 상권의 제휴 정보, 소상공인 가게 홍보, 총학생회 공지사항를 한눈에!</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- 검색창 -->
+    <div class="container lg-12 mt-5 mb-5">
+        <form action="" class="row">
+            <div class="col-lg-10" id="searchBox">
+                <input class="form-control form-control-lg" id="postSearchInput" type="text"
+                    placeholder="찾으시는 게시글 키워드를 입력하세요" aria-label=".form-control-lg example">
+            </div>
+            <div class="col-lg-2 text-center">
+                <button type="button" class="btn btn-lg btn-outline-secondary mt-2" style="height: 60px; width: 180px;"
+                    type="button" id="postSearchBtn">검색</button>
+            </div>
+
+        </form>
+    </div>
+
+
+    <!-- 카테고리 -->
+    <div class="category mb-5">
+        <div class="container" id="postKind">
+            <div class="row postKindUl">
+
+                <div class="col-lg d-flex justify-content-center align-items-center">
+                    <button type="button" class="btn btn-lg fw-medium" id="affiliate_registration">제휴 등록</button>
+                </div>
+
+                <div class="col-lg d-flex justify-content-center align-items-center">
+                    <p id="category-bar">|</p>
+                </div>
+
+                <div class="col-lg d-flex justify-content-center align-items-center">
+                    <button type="button" class="btn btn-lg fw-medium" id="affiliate_referral">제휴 추천</button>
+                </div>
+                <div class="col-lg d-flex justify-content-center align-items-center">
+                    <p id="category-bar">|</p>
+                </div>
+                <div class="col-lg d-flex justify-content-center align-items-center">
+                    <button type="button" class="btn btn-lg fw-medium" id="affiliate_offer">제휴 제안</button>
+                </div>
+                <div class="col-lg d-flex justify-content-center align-items-center">
+                    <p id="category-bar">|</p>
+                </div>
+                <div class="col-lg-2 d-flex justify-content-center align-items-center">
+                    <button type="button" class="btn btn-lg fw-medium" id="announcement">총학생회 공지사항</button>
+                </div>
+                <div class="col-lg d-flex justify-content-center align-items-center">
+                    <p id="category-bar">|</p>
+                </div>
+                <div class="col-lg d-flex justify-content-center align-items-center">
+                    <button type="button" class="btn btn-lg fw-medium" id="chat">잡담</button>
+                </div>
+                <div class="col-lg d-flex justify-content-center align-items-center">
+                    <p id="category-bar">|</p>
+                </div>
+                <div class="col-lg d-flex justify-content-center align-items-center">
+                    <button type="button" class="btn btn-lg fw-medium" id="store_promotion">가게 홍보</button>
+                </div>
+                <div class="col-lg d-flex justify-content-center align-items-center">
+                    <p id="category-bar">|</p>
+                </div>
+                <div class="col-lg d-flex justify-content-center align-items-center">
+                    <button type="button" class="btn btn-lg fw-medium" id="write_post_btn">
+                        <img width="24" height="24" src="https://img.icons8.com/fluency/48/pencil-tip.png"
+                            alt="pencil-tip" /> 글 작성</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page content-->
+    <div class="container" id="pageContentContainer">
+        <div class="row">
+            <!-- Blog entries-->
+            <div class="col-lg-12">
+                <!-- Nested row for non-featured blog posts-->
+                <div class="row" id="card_container">
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination-->
+        <nav aria-label="Pagination">
+            <hr class="my-0" />
+            <ul class="pagination justify-content-center my-4">
+                <li class="page-item" id="previous_page"><a class="page-link" tabindex="-1"
+                        aria-disabled="true">Newer</a>
+                </li>
+                <li class="page-item active" aria-current="page" id="first_page"><a class="page-link">1</a></li>
+                <li class="page-item" id="second_page"><a class="page-link">2</a></li>
+                <li class="page-item" id="third_page"><a class="page-link">3</a></li>
+                <li class="page-item disabled" id="..."><a class="page-link" href="#!">...</a></li>
+                <li class="page-item" id="last_page"><a class="page-link">15</a></li>
+                <li class="page-item" id="next_page"><a class="page-link">Older</a></li>
+            </ul>
+        </nav>
+    </div>
+    <!-- Footer-->
+    <footer class="py-5 bg-dark">
+        <div class="container">
+            <p class="m-0 text-center text-white">Copyright &copy; UniUnity 2023 </p>
+            <p class="m-0 text-center text-white">Icon Copyright &copy; Icon8 </p>
+            <!-- <a href="https://icons8.com/icon/DFU1kReSUccu/heart">Heart</a> icon by <a
+                href="https://icons8.com">Icons8</a>
+            <a href="https://icons8.com/icon/8uAtuJQJ4jhd/star">Star</a> icon by <a href="https://icons8.com">Icons8</a>
+            <a href="https://icons8.com/icon/108791/comment">Comment</a> icon by <a href="https://icons8.com">Icons8</a>
+            <a href="https://icons8.com/icon/U0w9OIimAclW/click">Click</a> icon by <a
+                href="https://icons8.com">Icons8</a> -->
+
+        </div>
+    </footer>
+    <script src="/js/apiUrl.js"></script>
+    <script src="/js/post/post.js"></script>
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

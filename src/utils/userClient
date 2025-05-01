@@ -1,0 +1,9 @@
+// 임시 Mock Client
+const getUserInfo = async (user_email) => {
+  return {
+    user_email,
+    user_nickname: "MockUser"
+  };
+};
+
+module.exports = { getUserInfo };

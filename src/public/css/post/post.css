@@ -1,0 +1,42 @@
+#affiliate_registration,
+#affiliate_referral,
+#affiliate_offer,
+#chat,
+#store_promotion{
+  width: 130px;
+  color:var(--bs-gray-900);
+  background-color: white;
+  border-color: white;
+}
+
+#write_post_btn{
+    width: 132px;
+    background-color: white;
+    border-color: white;
+}
+#announcement{
+  color:var(--bs-gray-900);
+  background-color: white;
+  border-color: white;
+}
+
+.btn:hover {
+ font-weight: bold; /* hover 시 폰트 굵기 변경 */
+}
+.category{
+ border: 1px solid;
+ border-color: #dee2e6;
+}
+
+#category-bar{
+ line-height: 60px;
+ color: rgba(0,0,0,0.1);
+}
+
+.page-item:hover {
+  cursor: pointer;
+}
+
+.page-item.disabled {
+  pointer-events: none;
+}
