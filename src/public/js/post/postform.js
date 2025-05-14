@@ -3,7 +3,7 @@ const Editor = toastui.Editor;
 
 var userInfo; //유저정보
 
-//작성자 회원 정보 불러오기
+// 작성자 회원 정보 불러오기
 // const loadloginData = () => {
 //   const url = `${apiUrl}/loginStatus`;
 //   fetch(url)
@@ -29,25 +29,42 @@ var userInfo; //유저정보
 //     )
 // }
 
-//임시 설정
-const loadloginData = () => {
-  userInfo = {
-    loginStatus: true,
-    user_email: "mock@email.com",
-    user_nickname: "MockUser",
-    user_type: "학생",
-    university_url: "mock-university",
-    university_id: 1
-  };
+const loadloginData = async () => {
+  try {
+    const res = await fetch("/auth/me", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        "x-refresh-token": localStorage.getItem("refreshToken")
+      }
+    });
 
-  const navBar = document.getElementById("navbar-brand");
-  const previousPageURL = document.referrer;
+    const newAccessToken = res.headers.get("x-access-token");
+    if (newAccessToken) {
+      localStorage.setItem("accessToken", newAccessToken);
+    }
 
-  navBar.addEventListener("click", function () {
-    window.location.href = previousPageURL;
-  });
+    userInfo = await res.json();
 
-  setSelectCategory(userInfo.user_type);
+    const navBar = document.getElementById("navbar-brand");
+    const previousPageURL = document.referrer;
+
+    navBar.addEventListener("click", function () {
+      window.location.href = previousPageURL;
+    });
+
+    // 로그인 안 됐으면 로그인 창으로
+    if (!userInfo.loginStatus) {
+      alert("로그인 후에 게시글을 작성할 수 있습니다.");
+      window.location.href = `${apiUrl}/login`;
+      return;
+    }
+
+    setSelectCategory(userInfo.user_type);
+  } catch (error) {
+    console.error('작성자 회원 정보 불러오기 오류', error);
+    alert("로그인 정보를 불러오는 중 문제가 발생했습니다.");
+    window.location.href = `${apiUrl}/login`;
+  }
 };
 
 // 파일명을 생성하는 함수

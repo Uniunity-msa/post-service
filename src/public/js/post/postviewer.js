@@ -8,23 +8,53 @@ const writeCommentBtn = document.getElementById('write_comment_btn');
 var domain;
 var university_url;
 const navBar = document.getElementById("navbar-brand");
+let userInfo; // 유저정보
 
 // 작성자 회원 정보 불러오기
-const loadloginData = async () => {
-  const url = `${apiUrl}/loginStatus`;
-  await fetch(url)
-    .then((res) => res.json())
-    .then((res) => {
-      userInfo = res;
-      const previousPageURL = document.referrer;
+// const loadloginData = async () => {
+//   const url = `${apiUrl}/loginStatus`;
+//   await fetch(url)
+//     .then((res) => res.json())
+//     .then((res) => {
+//       userInfo = res;
+//       const previousPageURL = document.referrer;
 
-      navBar.addEventListener("click", function() {
-        window.location.href = previousPageURL;
-      });
-    })
-    .catch((error) => {
-      console.error('작성자 회원 정보 불러오기 오류', error);
+//       navBar.addEventListener("click", function() {
+//         window.location.href = previousPageURL;
+//       });
+//     })
+//     .catch((error) => {
+//       console.error('작성자 회원 정보 불러오기 오류', error);
+//     });
+// };
+
+
+
+// 작성자 회원 정보 불러오기 (jwt방식으로 변경)
+const loadloginData = async () => {
+    try {
+    const res = await fetch("/auth/me", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        "x-refresh-token": localStorage.getItem("refreshToken")
+      }
     });
+
+    const newAccessToken = res.headers.get("x-access-token");
+    if (newAccessToken) {
+      localStorage.setItem("accessToken", newAccessToken);
+    }
+
+    userInfo = await res.json();
+
+    const previousPageURL = document.referrer;
+    navBar.addEventListener("click", function () {
+      window.location.href = previousPageURL;
+    });
+
+  } catch (error) {
+    console.error('작성자 회원 정보 불러오기 오류', error);
+  }
 };
 
 // 게시글 작성자 이메일 가져오기
@@ -33,6 +63,7 @@ const postWriter = async (post_id) => {
   try {
     const response = await fetch(url);
     const data = await response.json();
+    console.log("postWriterInfo (from API):", data); // 지울거ㅓㅓㅓㅓ
     postWriterInfo = data;
     domain = extractDomainFromEmail(postWriterInfo.user_email);
     university_url = domain;

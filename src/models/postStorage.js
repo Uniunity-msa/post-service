@@ -1,6 +1,7 @@
 "use strict"
 const { reject } = require("underscore");
 const { pool } = require("../config/db");
+const { uploadImageToGCS } = require("../utils/gcsUploader");
 
 class PostStorage {
     //게시글 등록
@@ -61,44 +62,48 @@ class PostStorage {
             });
         });
     }
-     //게시글 등록시 post이미지 저장
-     static async saveImagePost(postId, postInfo, formattedDateTime) {
-        return new Promise(async (resolve, reject) => {
-            pool.getConnection(async (err, connection) => {
-                if (err) {
-                    console.error('MySQL 연결 오류: ', err);
-                    reject(err);
+     //게시글 등록시 post이미지 저장(클라우드 스토리지 사용방식으로 변경)
+    
+    static async saveImagePost(postId, postInfo, formattedDateTime) {
+        return new Promise((resolve, reject) => {
+        pool.getConnection(async (err, connection) => {
+            if (err) return reject(err);
+    
+            try {
+            const post_id = postId;
+    
+            // src="data:image/..." 태그에서 base64 이미지 추출
+            const regex = /<img\s+src="([^"]+)"\s+alt="[^"]+"\s+contenteditable="false">/gi;
+            const matches = postInfo.match(regex);
+    
+            if (!matches || matches.length === 0) {
+                connection.release();
+                return resolve({ result: true, status: 201 });
+            }
+    
+            // 첫 번째 이미지만 처리 (여러 개 저장 원하면 반복문으로 확장 가능)
+            const base64Image = matches[0].match(/src="([^"]+)"/)[1];
+            const base64Data = base64Image.replace(/^data:image\/\w+;base64,/, "");
+            const buffer = Buffer.from(base64Data, "base64");
+    
+            const uploadedUrl = await uploadImageToGCS(buffer, `post_${post_id}.jpg`);
+    
+            const imageQuery = 'INSERT INTO PostImage(image_id, post_id, image_url, image_date) VALUES (?, ?, ?, ?);';
+            connection.query(imageQuery, [null, post_id, uploadedUrl, formattedDateTime], (imageErr) => {
+                connection.release();
+                if (imageErr) {
+                return reject({ result: false, status: 500, err: `${imageErr}` });
                 }
-                const post_id = postId; // 새로 추가된 게시글의 ID
-                const regex = /<img\s+src="([^"]+)"\s+alt="[^"]+"\s+contenteditable="false">/gi;
-                const matches = postInfo.match(regex);
-                const image_url = matches && matches.length > 0 ? matches[0].replace(/<img\s+src="([^"]+)"\s+alt="[^"]+"\s+contenteditable="false">/gi, '$1') : null;
-                if (image_url) {
-                    const imageQuery = 'INSERT INTO PostImage(image_id, post_id, image_url, image_date) VALUES (?, ?, ?, ?);';
-                    pool.query(imageQuery, [null, post_id, image_url, formattedDateTime], (imageErr) => {
-                        pool.releaseConnection(connection);
-                        if (imageErr) {
-                            reject({
-                                result: false,
-                                status: 500,
-                                err: `${imageErr}`
-                            });
-                        } else {
-                            resolve({
-                                result: true,
-                                status: 201
-                            });
-                        }
-                    });
-                } else {  //이미지 url 없음
-                    resolve({
-                        result: true,
-                        status: 201
-                    });
-                }
-            })
-        })
+                return resolve({ result: true, status: 201 });
+            });
+            } catch (err) {
+            connection.release();
+            reject({ result: false, status: 500, err: `${err}` });
+            }
+        });
+        });
     }
+
      //post_id로 게시글 불러오기
      static getPost(post_id) {
         return new Promise(async (resolve, reject) => {
@@ -363,6 +368,88 @@ class PostStorage {
             });
         });
     }
+    // 게시글 댓글 수 증가
+    static updatePostCommentCount(post_id) {
+        return new Promise((resolve, reject) => {
+            pool.getConnection((err, connection) => {
+                if (err) {
+                    console.error('MySQL 연결 오류: ', err);
+                    reject(err);
+                    return;
+                }
+
+                const query = 'UPDATE Post SET comment_count = comment_count + 1 WHERE post_id = ?';
+
+                connection.query(query, [post_id], (err) => {
+                    pool.releaseConnection(connection);
+                    if (err) {
+                        console.error('Query 오류: ', err);
+                        reject({ result: false, err: `${err}` });
+                    } else {
+                        resolve({ result: true });
+                    }
+                });
+            });
+        });
+    }
+
+    // 게시글 댓글 수 감소
+    static reducePostCommentCount(post_id) {
+        return new Promise((resolve, reject) => {
+            pool.getConnection((err, connection) => {
+                if (err) {
+                    console.error('MySQL 연결 오류: ', err);
+                    reject(err);
+                    return;
+                }
+
+                const query = 'UPDATE Post SET comment_count = comment_count - 1 WHERE post_id = ?';
+
+                connection.query(query, [post_id], (err) => {
+                    pool.releaseConnection(connection);
+                    if (err) {
+                        console.error('Query 오류: ', err);
+                        reject({ result: false, err: `${err}` });
+                    } else {
+                        resolve({ result: true });
+                    }
+                });
+            });
+        });
+    }
+    //좋아요 증가
+    static updatePostLikeCount(post_id, delta) {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+        if (err) return reject(err);
+
+        const query = `UPDATE Post SET like_count = like_count + ? WHERE post_id = ?`;
+        connection.query(query, [delta, post_id], (err) => {
+            connection.release();
+            if (err) reject({ result: false, err: `${err}` });
+            else resolve({ result: true });
+        });
+        });
+    });
+    }
+  //스크랩 증가
+
+    static updatePostScrapCount(post_id, delta) {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+        if (err) return reject(err);
+
+        const query = `UPDATE Post SET scrap_count = scrap_count + ? WHERE post_id = ?`;
+        connection.query(query, [delta, post_id], (err) => {
+            connection.release();
+            if (err) reject({ result: false, err: `${err}` });
+            else resolve({ result: true });
+        });
+        });
+    });
+    }
+  
+
 
 }
 
