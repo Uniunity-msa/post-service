@@ -82,6 +82,8 @@ class PostStorage {
             }
     
             // 첫 번째 이미지만 처리 (여러 개 저장 원하면 반복문으로 확장 가능)
+
+
             const base64Image = matches[0].match(/src="([^"]+)"/)[1];
             const base64Data = base64Image.replace(/^data:image\/\w+;base64,/, "");
             const buffer = Buffer.from(base64Data, "base64");
