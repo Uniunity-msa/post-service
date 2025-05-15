@@ -1,6 +1,6 @@
 "use strict"
 const { reject } = require("underscore");
-const { pool } = require("../config/db");
+const  pool  = require("../config/db");
 
 class PostStorage {
     //게시글 등록
@@ -239,31 +239,6 @@ class PostStorage {
             });
         })
     }
-     // 마이페이지) 내가 작성한 게시글 보기
-     static getMyPost(userInfo) {
-        const user_email = userInfo.user_email;
-        return new Promise(async (resolve, reject) => {
-            pool.getConnection((err, connection) => {
-                if (err) {
-                    console.error('MySQL 연결 오류: ', err);
-                    reject(err)
-                }
-
-                pool.query("SELECT * FROM Post WHERE user_email=?  ORDER BY post_id DESC;", [user_email], function (err, rows) {
-                    pool.releaseConnection(connection);
-                    if (err) {
-                        console.error('Query 함수 오류', err);
-                        reject(err)
-                    }
-                    else if (rows.length < 1) {
-                        pool.releaseConnection(connection);
-                        resolve({ result: "현재 내가 작성한 게시글이 없습니다. 게시글을 작성해 보세요 :)", status: 202 });
-                    }
-                    resolve({ result: rows, status: 200 });
-                })
-            })
-        });
-    }
     //내가 작성한 게시글 삭제하기
     static goDeletePost(post_id, user_email) {
         return new Promise(async (resolve, reject) => {
@@ -363,6 +338,134 @@ class PostStorage {
             });
         });
     }
+// 마이페이지) 내가 작성한 게시글 보기
+static getMyPost(userInfo) {
+    const user_email = userInfo;
+    return new Promise(async (resolve, reject) => {
+        pool.getConnection((err, connection) => {
+            if (err) {
+                console.error('MySQL 연결 오류: ', err);
+                reject(err)
+            }
+
+            pool.query("SELECT * FROM Post WHERE user_email=?  ORDER BY post_id DESC;", [user_email], function (err, rows) {
+                pool.releaseConnection(connection);
+                if (err) {
+                    console.error('Query 함수 오류', err);
+                    reject(err)
+                }
+                else if (rows.length < 1) {
+                    pool.releaseConnection(connection);
+                    resolve({ result: "현재 내가 작성한 게시글이 없습니다. 게시글을 작성해 보세요 :)", status: 202 });
+                }
+                resolve({ result: rows, status: 200 });
+            })
+        })
+    });
+}
+// 마이페이지 - 내가 작성한 댓글 단 게시글 불러오기
+static getMyCommentPost(post_ids) {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+            if (err) {
+                console.error('MySQL 연결 오류:', err);
+                return reject(err);
+            }
+
+            // post_ids가 없거나 빈 배열이면 처리
+            if (!post_ids || post_ids.length === 0) {
+                connection.release();
+                return resolve({ result: "현재 내가 댓글 단 게시글이 없습니다. 게시글에 댓글을 작성해 보세요 :)", status: 202 });
+            }
+
+            const sql = "SELECT * FROM Post WHERE post_id IN (?) ORDER BY post_id DESC";
+
+            connection.query(sql, [post_ids], (err, rows) => {
+                connection.release();
+
+                if (err) {
+                    console.error('Query 함수 오류', err);
+                    return reject(err);
+                }
+
+                if (rows.length === 0) {
+                    return resolve({ result: "현재 내가 댓글 단 게시글이 없습니다. 게시글에 댓글을 작성해 보세요 :)", status: 202 });
+                }
+
+                return resolve({ result: rows, status: 200 });
+            });
+        });
+    });
+}
+
+// 마이페이지) user_email에 해당하는 사용자의 하트 목록 보여주기
+static getUserHeartList(post_ids) {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+            if (err) {
+                console.error('MySQL 연결 오류:', err);
+                return reject(err);
+            }
+
+            // post_ids가 없거나 빈 배열이면 처리
+            if (!post_ids || post_ids.length === 0) {
+                connection.release();
+                return resolve({ result: "현재 내가 좋아요한 게시글이 없습니다. 게시글에 좋아요를 눌러보세요 :)", status: 202 });
+            }
+
+            const sql = "SELECT * FROM Post WHERE post_id IN (?) ORDER BY post_id DESC";
+            connection.query(sql, [post_ids], (err, rows) => {
+                connection.release();
+
+                if (err) {
+                    console.error('Query 함수 오류', err);
+                    return reject(err);
+                }
+
+                if (rows.length === 0) {
+                    return resolve({ result: "현재 내가 좋아요한 게시글이 없습니다. 게시글에 좋아요를 눌러보세요 :)", status: 202 });
+                }
+
+                return resolve({ result: rows, status: 200 });
+            });
+        });
+    });
+}
+
+// 마이페이지) post_id에 해당하는 사용자의 스크랩 목록 보여주기
+static getUserScrapList(post_ids) {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+            if (err) {
+                console.error('MySQL 연결 오류:', err);
+                return reject(err);
+            }
+
+            // post_ids가 없거나 빈 배열이면 처리
+            if (!post_ids || post_ids.length === 0) {
+                connection.release();
+                return resolve({ result: "현재 내가 스크랩한 게시글이 없습니다. 게시글을 스크랩해 보세요 :)", status: 202 });
+            }
+
+            const sql = "SELECT * FROM Post WHERE post_id IN (?) ORDER BY post_id DESC";
+
+            connection.query(sql, [post_ids], (err, rows) => {
+                connection.release();
+
+                if (err) {
+                    console.error('Query 함수 오류', err);
+                    return reject(err);
+                }
+
+                if (rows.length === 0) {
+                    return resolve({ result: "현재 내가 스크랩한 게시글이 없습니다. 게시글을 스크랩해 보세요 :)", status: 202 });
+                }
+
+                return resolve({ result: rows, status: 200 });
+            });
+        });
+    });
+}
 
 }
 

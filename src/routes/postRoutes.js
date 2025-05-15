@@ -30,4 +30,7 @@ router.get("/searchPost/:keyword", postController.searchPost);
 // 게시글 삭제
 router.delete("/deletePost/:post_id/:user_email", postController.deletePost);
 
+// 사용자 반응 게시글 불러오기
+router.post("/mypage/community/post/:category", postController.myCommunityPostData);
+
 module.exports = router;

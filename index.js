@@ -33,8 +33,16 @@ app.get("/post/all/:university_url", (req, res) => {
   res.render("post/post", { university_url: req.params.university_url });
 });
 
+app.get("/mypage/community/post/:category", (req, res) => {
+  res.render("post/communityPost", { category: req.params.category });
+});
+
+
 // 실제 API 라우터
 app.use("/", postRouter);
+
+
+
 
 // 서버 시작
 app.listen(PORT, () => {
