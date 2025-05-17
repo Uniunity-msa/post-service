@@ -32,12 +32,15 @@ const setLoginHeader = (res) => {
 }
 
 const fetchPostData = async () => {
+
     let frontend_url = window.location.href;
     let category = frontend_url.split('/')[6];
     let req = {
-        user_email: userInfo.user_email
+        user_email: '20211138@sungshin.ac.kr' // 사용자 이메일 받아오도록 수정 //
     }
-
+    // let req = {
+    //     user_email: userInfo.user_email // 사용자 이메일 받아오도록 수정 //
+    // }
     const commnunityPostTitle = document.getElementById("community_post_title")
     if (category === '1') {
         commnunityPostTitle.textContent = '내가 작성한 게시글'
@@ -51,6 +54,10 @@ const fetchPostData = async () => {
 
 
     const url = `${apiUrl}/mypage/community/post/${category}`;
+
+    console.log("api 요청 주소:", url);
+console.log("요청 바디:", req);
+
     await fetch(url, {
         method: "POST",
         headers: {
@@ -75,7 +82,7 @@ const fetchPostData = async () => {
             console.error("Error: ", error);
             alert("서버의 문제로 게시글 관리 접근에 실패했습니다. 다시 시도해주세요.");
         })
-
+ 
 }
 function truncateText(elementId, maxLength, data) {
     const element = document.getElementById(elementId);
@@ -182,6 +189,7 @@ function createCard(data) {
 // 로드 후 loadData()실행
 window.addEventListener('DOMContentLoaded', async function () {
     // await fetchLoginData();
+    console.log("js 이벤트리스너 함수 실행");
     await fetchPostData();
 
 });

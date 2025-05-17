@@ -30,6 +30,7 @@ router.get("/searchPost/:keyword", postController.searchPost);
 // 게시글 삭제
 router.delete("/deletePost/:post_id/:user_email", postController.deletePost);
 
+
 //좋아요, 북마크, 댓글 증가감소
 router.post("/increaseHeart", postController.increaseHeart);
 router.post("/decreaseHeart", postController.decreaseHeart);
@@ -37,6 +38,10 @@ router.post("/increaseScrap", postController.increaseScrap);
 router.post("/decreaseScrap", postController.decreaseScrap);
 router.post("/increaseComment", postController.increaseComment);
 router.post("/decreaseComment", postController.decreaseComment);
+
+
+// 사용자 반응 게시글 불러오기
+router.post("/mypage/community/post/:category", postController.myCommunityPostData);
 
 
 module.exports = router;

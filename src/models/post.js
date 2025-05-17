@@ -2,11 +2,188 @@
 
 const PostStorage = require("./postStorage");
 const UserClient = require("../utils/userClient");
+const amqp = require('amqplib/callback_api');
+const { v4: uuidv4 } = require('uuid');
 
 class Post {
-  constructor(body) {
-    this.body = body;
+  constructor() {
+      this.channel = null;
   }
+
+  // 채널이 준비될 때까지 기다리는 Promise를 반환
+  connectToRabbitMQ() {
+      return new Promise((resolve, reject) => {
+          amqp.connect('amqp://127.0.0.1', (err, connection) => { // 나중에 IP 주소 바꾸기
+              if (err) {
+                  console.error('RabbitMQ 연결 오류:', err);
+                  reject(err);
+                  return;
+              }
+
+              connection.createChannel((err, channel) => {
+                  if (err) {
+                      console.error('채널 생성 오류:', err);
+                      reject(err);
+                      return;
+                  }
+
+                  this.channel = channel;
+
+                  // 큐 선언
+                  this.channel.assertQueue('CommentRequestQueue', { durable: true });
+                  this.channel.assertQueue('HeartRequestQueue', { durable: true });
+                  this.channel.assertQueue('ScrapRequestQueue', { durable: true });  
+                  
+                  resolve(); // 채널 준비 완료 후 resolve
+              });
+          });
+      });
+  }
+
+//(마이페이지)내가 댓글 작성한 게시글 불러오기
+async myCommunityCommentPost() {
+try {
+  const correlationId = uuidv4();
+
+  //응답 받을 임시큐
+  const tempQueue = await new Promise((resolve, reject) => {
+    this.channel.assertQueue('', { exclusive: true }, (err, q) => {
+      if (err) return reject(err);
+      resolve(q.queue);
+    });
+  });
+
+  const message = { 
+    email: '20211138@sungshin.ac.kr', // 실제 email을 동적으로 받을 경우 수정 필요
+  };
+
+  // 응답 대기 
+  const response = await new Promise((resolve, reject) => {
+    this.channel.consume(tempQueue, async (msg) => {
+      if (msg.properties.correlationId === correlationId) {
+        const postIds = JSON.parse(msg.content.toString());
+        const data = await PostStorage.getMyCommentPost(postIds);
+        resolve(data);
+      }
+    }, { noAck: true });
+
+    // 요청 메세지 보내기
+    this.channel.sendToQueue('CommentRequestQueue', Buffer.from(JSON.stringify(message)), {
+        replyTo: tempQueue,
+        correlationId,
+        persistent: true,
+      }
+    );
+  });
+
+  return response;
+
+} catch (err) {
+  return {
+      result: false,
+      status: 500,
+      msg: err.message || err,
+  };
+}}
+
+// 마이페이지) 유저 좋아요 목록 보기
+async getUserHeartList() {
+  try {
+    if (!this.channel) {
+      throw new Error('채널이 아직 초기화되지 않았습니다.');
+    }
+
+    const correlationId = uuidv4();
+    const email = '20211151@sungshin.ac.kr';  // 실제 email을 동적으로 받을 경우 수정 필요
+
+    // 임시 응답 큐 생성
+    const tempQueue = await new Promise((resolve, reject) => {
+      this.channel.assertQueue('', { exclusive: true }, (err, q) => {
+        if (err) return reject(err);
+        resolve(q.queue);
+      });
+    });
+
+    const message = { email };
+
+    // 응답 대기
+    const response = await new Promise((resolve, reject) => {
+      this.channel.consume(tempQueue, async (msg) => {
+        if (msg.properties.correlationId === correlationId) {
+          const postIds = JSON.parse(msg.content.toString());
+          const data = await PostStorage.getUserHeartList(postIds);
+          resolve(data);
+        }
+      }, { noAck: true });
+
+      // 요청 메세지 보내기
+      this.channel.sendToQueue('HeartRequestQueue', Buffer.from(JSON.stringify(message)), {
+        replyTo: tempQueue,
+        correlationId,
+        persistent: true,
+      });
+    });
+
+    return response;
+
+  } catch (err) {
+    return {
+      result: false,
+      status: 500,
+      msg: err.message || err
+    };
+  }
+}
+
+
+// 마이페이지) 유저 스크랩 목록 보기
+async getUserScrapList() {
+  try {
+    if (!this.channel) {
+      throw new Error('채널이 아직 초기화되지 않았습니다.');
+    }
+
+    const correlationId = uuidv4();
+    const email = '20211138@sungshin.ac.kr';  // 실제 email을 동적으로 받을 경우 수정 필요
+
+    // 임시 응답 큐 생성
+    const tempQueue = await new Promise((resolve, reject) => {
+      this.channel.assertQueue('', { exclusive: true }, (err, q) => {
+        if (err) return reject(err);
+        resolve(q.queue);
+      });
+    });
+
+    const message = { email };
+
+    // 응답 대기
+    const response = await new Promise((resolve, reject) => {
+      this.channel.consume(tempQueue, async (msg) => {
+        if (msg.properties.correlationId === correlationId) {
+          const postIds = JSON.parse(msg.content.toString());
+          const data = await PostStorage.getUserScrapList(postIds);
+          resolve(data);
+        }
+      }, { noAck: true });
+
+      // 요청 메세지 보내기
+      this.channel.sendToQueue('ScrapRequestQueue', Buffer.from(JSON.stringify(message)), {
+        replyTo: tempQueue,
+        correlationId,
+        persistent: true,
+      });
+    });
+
+    return response;
+
+  } catch (err) {
+    return {
+      result: false,
+      status: 500,
+      msg: err.message || err
+    };
+  }
+}
 
   async createPost() {
     const client = this.body;
@@ -99,8 +276,7 @@ class Post {
    //마이페이지-내가 작성한 게시글 보기
    async myCommunityPost() {
     try {
-        const client = this.body;
-        const response = await PostStorage.getMyPost(client);
+        const response = await PostStorage.getMyPost('20211138@sungshin.ac.kr');
         return response;
     } catch (err) {
         return {
@@ -119,5 +295,6 @@ class Post {
     }
   }
 }
+        
 
 module.exports = Post;

@@ -1,8 +1,19 @@
 "use strict";
 
 const Post = require("../models/post");
+
 const { verifyTokenWithUserService } = require("../utils/userClient");
 
+const post = new Post();
+const postWithRabbitMQ = new Post(); // 전역 인스턴스
+
+
+// 서버 시작할 때 RabbitMQ 연결해두기
+postWithRabbitMQ.connectToRabbitMQ()
+  .then(() => console.log("RabbitMQ 사전 연결 완료"))
+  .catch((err) => console.error("RabbitMQ 사전 연결 실패", err));
+
+  
 const postController = {
   // uploadPost: async (req, res) => {
   //   const post = new Post(req.body);
@@ -108,6 +119,7 @@ const postController = {
     const response = await post.postWriter(req.params.post_id);
     return res.json(response);
   },
+
   
   //좋아요, 북마크, 댓글 증가감소
   increaseHeart: async (req, res) => {
@@ -144,6 +156,24 @@ const postController = {
     const { post_id } = req.body;
     const result = await PostStorage.reducePostCommentCount(post_id);
     return res.json(result);
+  },
+
+
+
+
+  myCommunityPostData: async (req, res) => {
+    const category = req.params.category;
+    let response;
+    if (category === '1') {
+        response = await postWithRabbitMQ.myCommunityPost();
+    } else if (category === '2') {
+        response = await postWithRabbitMQ.myCommunityCommentPost();
+    } else if (category === '3') {
+        response = await postWithRabbitMQ.getUserHeartList();
+    } else if (category === '4') {
+        response = await postWithRabbitMQ.getUserScrapList();
+    }
+    return res.json(response);
   }
 
 
