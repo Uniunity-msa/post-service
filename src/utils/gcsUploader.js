@@ -26,7 +26,3 @@ async function uploadImageToGCS(fileBuffer, originalName) {
 }
 
 module.exports = { uploadImageToGCS };
-<<<<<<< HEAD
-=======
-
->>>>>>> b1696161fc2b618bd82772a463c121c1cf34f4ad

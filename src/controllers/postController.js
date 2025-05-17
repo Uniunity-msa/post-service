@@ -107,7 +107,46 @@ const postController = {
     const post = new Post();
     const response = await post.postWriter(req.params.post_id);
     return res.json(response);
+  },
+  
+  //좋아요, 북마크, 댓글 증가감소
+  increaseHeart: async (req, res) => {
+    const { post_id } = req.body;
+    const result = await PostStorage.updatePostLikeCount(post_id, +1);
+    return res.json(result);
+  },
+
+  decreaseHeart: async (req, res) => {
+    const { post_id } = req.body;
+    const result = await PostStorage.updatePostLikeCount(post_id, -1);
+    return res.json(result);
+  },
+
+  increaseScrap: async (req, res) => {
+    const { post_id } = req.body;
+    const result = await PostStorage.updatePostScrapCount(post_id, +1);
+    return res.json(result);
+  },
+
+  decreaseScrap: async (req, res) => {
+    const { post_id } = req.body;
+    const result = await PostStorage.updatePostScrapCount(post_id, -1);
+    return res.json(result);
+  },
+
+  increaseComment: async (req, res) => {
+    const { post_id } = req.body;
+    const result = await PostStorage.updatePostCommentCount(post_id);
+    return res.json(result);
+  },
+
+  decreaseComment: async (req, res) => {
+    const { post_id } = req.body;
+    const result = await PostStorage.reducePostCommentCount(post_id);
+    return res.json(result);
   }
+
+
 };
 
 module.exports = postController;

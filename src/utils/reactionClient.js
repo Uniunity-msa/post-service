@@ -1,5 +1,5 @@
 const axios = require('axios');
-const REACTION_SERVICE_URL = 'http://post-reaction-service:3002'; // 이건 예시....이런식으로 구성
+const REACTION_SERVICE_URL = 'http://34.47.84.123:3002'; // 이건 예시....이런식으로 구성
 
 // ---------------------- 좋아요 ----------------------
 exports.addHeart = async (data) => {
@@ -64,3 +64,37 @@ exports.addHeart = async (data) => {
     const res = await axios.get(`${REACTION_SERVICE_URL}/getCommentWriter/${commentId}`);
     return res.data;
   };
+
+
+// ---------------------- 증가 감소 ----------------------
+
+exports.increaseHeartCount = async (postId) => {
+  const res = await axios.post(`${POST_SERVICE_URL}/increaseHeart`, { post_id: postId });
+  return res.data;
+};
+
+exports.decreaseHeartCount = async (postId) => {
+  const res = await axios.post(`${POST_SERVICE_URL}/decreaseHeart`, { post_id: postId });
+  return res.data;
+};
+
+exports.increaseScrapCount = async (postId) => {
+  const res = await axios.post(`${POST_SERVICE_URL}/increaseScrap`, { post_id: postId });
+  return res.data;
+};
+
+exports.decreaseScrapCount = async (postId) => {
+  const res = await axios.post(`${POST_SERVICE_URL}/decreaseScrap`, { post_id: postId });
+  return res.data;
+};
+
+exports.increaseCommentCount = async (postId) => {
+  const res = await axios.post(`${POST_SERVICE_URL}/increaseComment`, { post_id: postId });
+  return res.data;
+};
+
+exports.decreaseCommentCount = async (postId) => {
+  const res = await axios.post(`${POST_SERVICE_URL}/decreaseComment`, { post_id: postId });
+  return res.data;
+};
+ 
