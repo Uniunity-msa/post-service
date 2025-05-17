@@ -124,15 +124,15 @@ const postController = {
   //좋아요, 북마크, 댓글 증가감소
   increaseHeart: async (req, res) => {
     const { post_id } = req.body;
-    const result = await PostStorage.updatePostLikeCount(post_id, +1);
-    return res.json(result);
+    const response = await post.increaseHeart(post_id);
+    return res.status(200).json(response);
   },
 
   decreaseHeart: async (req, res) => {
     const { post_id } = req.body;
-    const result = await PostStorage.updatePostLikeCount(post_id, -1);
-    return res.json(result);
-  },
+    const response = await post.decreaseHeart(post_id);
+    return res.status(200).json(response);
+},
 
   increaseScrap: async (req, res) => {
     const { post_id } = req.body;
