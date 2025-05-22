@@ -1,8 +1,9 @@
 const amqp = require("amqplib");
 
 const RECV_QUEUES = [
-  'RecvUniversityName',
-  'RecvUniversityID'
+  'RecvPostUniversityName',
+  'RecvPostUniversityID'
+  
 ];
 
 let channel;
