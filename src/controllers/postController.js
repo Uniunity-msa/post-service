@@ -5,7 +5,7 @@ const Post = require("../models/post");
 const { fetchUserInfoFromUserService } = require("../utils/userClient");
 const post = new Post();
 const postWithRabbitMQ = new Post(); // 전역 인스턴스
-const { sendUniversityURL, receiveUniversityData } = require("../utils/rabbitmq");
+const { sendUniversityURL, receiveUniversityData } = require("../utils/rabbitMQ");
 
 // 서버 시작할 때 RabbitMQ 연결해두기
 postWithRabbitMQ.connectToRabbitMQ()
