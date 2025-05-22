@@ -47,7 +47,8 @@ router.post("/mypage/community/post/:category", postController.myCommunityPostDa
 
 router.get("/postform/:university_url", (req, res) => {
   const { university_url } = req.params;
-  res.render("postform", { university_url }); // 🔥 postForm.ejs 필요
+  res.render("post/postform", { university_url }); // 🔥 postForm.ejs 필요
+
 });
 
 module.exports = router;

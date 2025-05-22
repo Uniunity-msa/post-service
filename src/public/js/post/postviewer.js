@@ -49,6 +49,8 @@ const loadloginData = async () => {
 };
 
 
+
+
 // 게시글 작성자 이메일 가져오기
 const postWriter = async (post_id) => {
   const url = `${apiUrl}/getPostWriter/${post_id}`;

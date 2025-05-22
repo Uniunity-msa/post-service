@@ -23,6 +23,7 @@ const postController = {
   // 게시글 업로드
   uploadPost: async (req, res) => {
       try {
+	 console.log("🍪 클라이언트가 보낸 쿠키:", req.headers.cookie);
         // 1. 클라이언트가 보낸 쿠키를 user-service에 그대로 전달
         const user = await fetchUserInfoFromUserService(req.headers.cookie);
 

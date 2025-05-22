@@ -1,5 +1,4 @@
 let userInfo; // 유저정보
-
 const userApiUrl = "http://34.47.84.123:3004";
 
 // 작성자 회원 정보 불러오기
@@ -7,20 +6,21 @@ const loadloginData = async () => {
   const res = await fetch(`${userApiUrl}/auth/me`, {
     credentials: "include", // 쿠키 포함
   });
-
-  console.log("🔍  응답 상태:", res.status); // 200, 401 등
-  console.log("🔍  응답 OK 여부:", res.ok);
+  
+  console.log("🔍 응답 상태:", res.status); // 200, 401 등
+  console.log("🔍 응답 OK 여부:", res.ok);
 
   if (!res.ok) {
     alert("로그인이 필요합니다.");
     return;
   }
   const data = await res.json();
-  console.log("✅  받아온 유저 정보:", data); // 실제 유저 정보 로그
+  console.log("✅ 받아온 유저 정보:", data); // 실제 유저 정보 로그
   userInfo = data; 
 };
 
-//로그인(로그아웃), 회원가입(마이페이지)버튼
+
+
 const loginStatusBtn = document.getElementById("loginStatusBtn");
 const signUpBtn = document.getElementById("signUpBtn");
 const backBtn = document.getElementById("backBtn");

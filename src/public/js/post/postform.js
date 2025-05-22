@@ -28,7 +28,6 @@ var userInfo; //유저정보
 //     }
 //     )
 // }
-
 const loadloginData = async () => {
   const res = await fetch(`${userApiUrl}/auth/me`, {
     credentials: "include", // 쿠키 포함
