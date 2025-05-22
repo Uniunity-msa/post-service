@@ -25,7 +25,7 @@ const loginStatusBtn = document.getElementById("loginStatusBtn");
 const signUpBtn = document.getElementById("signUpBtn");
 const backBtn = document.getElementById("backBtn");
 const navBar = document.getElementById("navbar-brand");
-const university_name = document.getElementById("university_name");
+const universityName = document.getElementById("university_name");
 
 const setLoginHeader = (res) => {
   navBar.setAttribute("href", `${apiUrl}/showPostListAll/${university_url}`);
