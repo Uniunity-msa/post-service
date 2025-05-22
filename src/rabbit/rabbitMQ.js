@@ -25,9 +25,9 @@ async function sendUniversityURL(university_url, sendQueueName) {
   if (!channel) await connectRabbitMQ();
   let recvQueueName;
   if(sendQueueName == 'SendUniversityName'){
-    recvQueueName = 'RecvUniversityName';
+    recvQueueName = 'RecvPostUniversityName';
   } else if(sendQueueName == 'SendUniversityID'){
-    recvQueueName = 'RecvUniversityID';
+    recvQueueName = 'RecvPostUniversityID';
   } else{
     console.log("명시되지 않은 sendQueueName 입니다.");
   }
