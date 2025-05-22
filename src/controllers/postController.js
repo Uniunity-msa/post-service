@@ -5,7 +5,7 @@ const Post = require("../models/post");
 const { fetchUserInfoFromUserService } = require("../utils/userClient");
 const post = new Post();
 const postWithRabbitMQ = new Post(); // 전역 인스턴스
-
+const { sendUniversityURL, receiveUniversityData } = require("../utils/rabbitmq");
 
 // 서버 시작할 때 RabbitMQ 연결해두기
 postWithRabbitMQ.connectToRabbitMQ()
@@ -48,6 +48,7 @@ const postController = {
 
   getUniversityName: async (req, res) => {
     try {
+       console.log("✅ 받은 req.body:", req.body); // 여기에 찍히는지 먼저 확인
             const university_url = req.body.university_url;
 
             await sendUniversityURL(university_url, 'SendUniversityName');
