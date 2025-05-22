@@ -52,7 +52,7 @@ const postController = {
 
             await sendUniversityURL(university_url, 'SendUniversityName');
 
-            const data = await receiveUniversityData('RecvUniversityName')
+            const data = await receiveUniversityData('RecvPostUniversityName')
             console.log(data.university_name);
             return res.json(data.university_name);
     }catch (err) {
