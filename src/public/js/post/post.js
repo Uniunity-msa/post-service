@@ -69,7 +69,7 @@ writePostBtn.addEventListener('click', function () {
 var currentUrl = window.location.href;
 var university_url = currentUrl.split("/").pop();
 
-changeUniversityName(university_url) //학교 이름으로 변경
+
 
 //학교 이름 바꾸기
 function getUniversityName() {
