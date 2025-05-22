@@ -1,25 +1,23 @@
 let userInfo; // 유저정보
 
-// 작성자 회원 정보 불러오기
-const loadloginData = () => {
-  const url = `${apiUrl}/auth/me`;
+const userApiUrl = "http://34.47.84.123:3004";
 
-  fetch(url, {
-    credentials: "include" // 쿠키 포함 (JWT 전달)
-  })
-    .then((res) => {
-      if (!res.ok) throw new Error("로그인 필요");
-      return res.json();
-    })
-    .then((res) => {
-      userInfo = res; // 전체 유저 정보 저장 (user_email, university_url 등)
-      setLoginHeader(res);
-    })
-    .catch((err) => {
-      console.warn("로그인 상태 아님:", err);
-      userInfo = null;
-      setLoginHeader({ loginStatus: false });
-    });
+// 작성자 회원 정보 불러오기
+const loadloginData = async () => {
+  const res = await fetch(`${userApiUrl}/auth/me`, {
+    credentials: "include", // 쿠키 포함
+  });
+
+  console.log("🔍  응답 상태:", res.status); // 200, 401 등
+  console.log("🔍  응답 OK 여부:", res.ok);
+
+  if (!res.ok) {
+    alert("로그인이 필요합니다.");
+    return;
+  }
+  const data = await res.json();
+  console.log("✅  받아온 유저 정보:", data); // 실제 유저 정보 로그
+  userInfo = data; 
 };
 
 //로그인(로그아웃), 회원가입(마이페이지)버튼
@@ -74,17 +72,33 @@ var university_url = currentUrl.split("/").pop();
 changeUniversityName(university_url) //학교 이름으로 변경
 
 //학교 이름 바꾸기
-function changeUniversityName(university_url) {
-  const universityNameElement = document.getElementById('university_name');
-  if (university_url === "sungshin") {
-    universityNameElement.textContent = '성신여자대학교 Unity';
-  } else if (university_url === "konkuk") {
-    universityNameElement.textContent = '건국대학교 Unity';
-  } else {
-    universityNameElement.textContent = 'Unity';
-  }
+function getUniversityName() {
+  const universityUrl = getUniversityUrl();
+  const req = {
+    university_url: universityUrl
+  };
+  fetch(`${apiUrl}/getUniversityName`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(req),
+  })
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return res.json();
+    })
+    .then(res => {
+      console.log(res);
+      // Uniname.push(res);
+      universityName.textContent = res;
+    })
+    .catch((error) => {
+      console.error('There has been a problem with your fetch operation:', error);
+    });
 }
-
 // 카테고리 버튼 요소들을 선택합니다.
 const affiliateRegistrationBtn = document.getElementById('affiliate_registration');
 const affiliateReferralBtn = document.getElementById('affiliate_referral');
@@ -371,6 +385,7 @@ document.addEventListener('keydown', function (event) {
 
 // 페이지 로드 후 실행
 window.addEventListener('DOMContentLoaded', function () {
+  getUniversityName();
   loadloginData();
   fetchPosts();
 });

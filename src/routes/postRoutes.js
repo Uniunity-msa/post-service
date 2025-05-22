@@ -4,6 +4,8 @@ const express = require("express");
 const router = express.Router();
 const postController = require("../controllers/postController");
 
+
+router.post("/getUniversityName", postController.getUniversityName);
 // 전체 게시글 불러오기
 router.get("/postAll/:university_url", postController.postAll);
 
@@ -43,5 +45,9 @@ router.post("/decreaseComment", postController.decreaseComment);
 // 사용자 반응 게시글 불러오기
 router.post("/mypage/community/post/:category", postController.myCommunityPostData);
 
+router.get("/postform/:university_url", (req, res) => {
+  const { university_url } = req.params;
+  res.render("postform", { university_url }); // 🔥 postForm.ejs 필요
+});
 
 module.exports = router;

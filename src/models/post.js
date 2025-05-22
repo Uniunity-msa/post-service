@@ -14,7 +14,7 @@ class Post {
   // 채널이 준비될 때까지 기다리는 Promise를 반환
   connectToRabbitMQ() {
       return new Promise((resolve, reject) => {
-          amqp.connect('amqp://127.0.0.1', (err, connection) => { // 나중에 IP 주소 바꾸기
+          amqp.connect('amqp://guest:guest@rabbit:5672', (err, connection) => { // 나중에 IP 주소 바꾸기
               if (err) {
                   console.error('RabbitMQ 연결 오류:', err);
                   reject(err);

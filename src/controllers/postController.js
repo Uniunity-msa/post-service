@@ -45,6 +45,21 @@ const postController = {
       }
     },
 
+  getUniversityName: async (req, res) => {
+    try {
+            const university_url = req.body.university_url;
+
+            await sendUniversityURL(university_url, 'SendUniversityName');
+
+            const data = await receiveUniversityData('RecvUniversityName')
+            console.log(data.university_name);
+            return res.json(data.university_name);
+    }catch (err) {
+            console.error('getUniversityName error:', err);
+            return res.status(500).json({ error: 'Internal Server Error' });
+        }
+    },
+
   // 전체 게시글 목록 반환
   postAll: async (req, res) => {
     const post = new Post();
