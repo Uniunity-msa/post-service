@@ -1,29 +1,15 @@
-const amqp = require('amqplib');
-const { v4: uuidv4 } = require('uuid');
+const axios = require("axios");
 
-async function verifyTokenWithUserService(token) {
-    
-  const conn = await amqp.connect(process.env.RABBITMQ_URL || 'amqp://localhost');
-  const channel = await conn.createChannel();
-
-  const replyQueue = await channel.assertQueue('', { exclusive: true });
-  const correlationId = uuidv4();
-
-  return new Promise((resolve) => {
-    channel.consume(replyQueue.queue, (msg) => {
-      if (msg.properties.correlationId === correlationId) {
-        const result = JSON.parse(msg.content.toString());
-        resolve(result);
-        conn.close();
-      }
-    }, { noAck: true });
-
-    channel.sendToQueue('auth',
-      Buffer.from(token),
-      {
-        correlationId: correlationId,
-        replyTo: replyQueue.queue
-      });
+// user-service의 /auth/me에 직접 요청 보내는 함수
+async function fetchUserInfoFromUserService(cookies) {
+  const response = await axios.get("http://user-service:3004/auth/me", {
+    headers: {
+      Cookie: cookies // 클라이언트가 보낸 쿠키를 그대로 전달
+    },
+    withCredentials: true,
   });
+
+  return response.data; // { user_id, university_id, ... }
 }
-module.exports = { verifyTokenWithUserService };
+
+module.exports = { fetchUserInfoFromUserService };

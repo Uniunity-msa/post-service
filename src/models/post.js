@@ -295,6 +295,7 @@ async getUserScrapList() {
       return { success: false, msg: err };
     }
   }
+  //좋아요 증가감소
 
   async increaseHeart(post_id) {
   try {
@@ -311,6 +312,23 @@ async getUserScrapList() {
       return { result: false, msg: err.message || err };
     }
   }
+
+  //스크랩 증가감소
+  async increaseScrap(post_id) {
+  try {
+    return await PostStorage.updatePostScrapCount(post_id, +1);
+  } catch (err) {
+    return { result: false, msg: err.message || err };
+  }
+  } 
+
+  async decreaseScrap(post_id) {
+  try {
+    return await PostStorage.updatePostScrapCount(post_id, -1);
+  } catch (err) {
+    return { result: false, msg: err.message || err };
+  }
+}
 }
         
 

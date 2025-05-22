@@ -2,14 +2,26 @@ let userInfo; // 유저정보
 
 // 작성자 회원 정보 불러오기
 const loadloginData = () => {
-  const url = `${apiUrl}/loginStatus`;
-  fetch(url)
-    .then((res) => res.json())
+  const url = `${apiUrl}/auth/me`;
+
+  fetch(url, {
+    credentials: "include" // 쿠키 포함 (JWT 전달)
+  })
     .then((res) => {
-      userInfo = res;
-      setLoginHeader(res)
+      if (!res.ok) throw new Error("로그인 필요");
+      return res.json();
     })
+    .then((res) => {
+      userInfo = res; // 전체 유저 정보 저장 (user_email, university_url 등)
+      setLoginHeader(res);
+    })
+    .catch((err) => {
+      console.warn("로그인 상태 아님:", err);
+      userInfo = null;
+      setLoginHeader({ loginStatus: false });
+    });
 };
+
 //로그인(로그아웃), 회원가입(마이페이지)버튼
 const loginStatusBtn = document.getElementById("loginStatusBtn");
 const signUpBtn = document.getElementById("signUpBtn");
@@ -18,7 +30,7 @@ const navBar = document.getElementById("navbar-brand");
 
 const setLoginHeader = (res) => {
   navBar.setAttribute("href", `${apiUrl}/showPostListAll/${university_url}`);
-  if (res.loginStatus) {
+  if (res.user_email) {
     loginStatusBtn.setAttribute("href", `${apiUrl}/logout`);
     loginStatusBtn.innerText = "로그아웃"
     signUpBtn.setAttribute("href", `${apiUrl}/mypage`);
