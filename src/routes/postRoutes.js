@@ -43,5 +43,9 @@ router.post("/decreaseComment", postController.decreaseComment);
 // 사용자 반응 게시글 불러오기
 router.post("/mypage/community/post/:category", postController.myCommunityPostData);
 
+router.get("/postform/:university_url", (req, res) => {
+  const { university_url } = req.params;
+  res.render("post/postform", { university_url }); // 🔥 postForm.ejs 필요
+});
 
 module.exports = router;

@@ -32,30 +32,24 @@ let userInfo; // 유저정보
 
 // 작성자 회원 정보 불러오기 (jwt방식으로 변경)
 const loadloginData = async () => {
-    try {
-    const res = await fetch("/auth/me", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        "x-refresh-token": localStorage.getItem("refreshToken")
-      }
-    });
+  const res = await fetch(`${userApiUrl}/auth/me`, {
+    credentials: "include", // 쿠키 포함
+  });
 
-    const newAccessToken = res.headers.get("x-access-token");
-    if (newAccessToken) {
-      localStorage.setItem("accessToken", newAccessToken);
-    }
+  console.log("🔍  응답 상태:", res.status); // 200, 401 등
+  console.log("🔍  응답 OK 여부:", res.ok);
 
-    userInfo = await res.json();
-
-    const previousPageURL = document.referrer;
-    navBar.addEventListener("click", function () {
-      window.location.href = previousPageURL;
-    });
-
-  } catch (error) {
-    console.error('작성자 회원 정보 불러오기 오류', error);
+  if (!res.ok) {
+    alert("로그인이 필요합니다.");
+    return;
   }
+  const data = await res.json();
+  console.log("✅  받아온 유저 정보:", data); // 실제 유저 정보 로그
+  userInfo = data; 
 };
+
+
+
 
 // 게시글 작성자 이메일 가져오기
 const postWriter = async (post_id) => {

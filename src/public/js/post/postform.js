@@ -28,43 +28,21 @@ var userInfo; //유저정보
 //     }
 //     )
 // }
-
 const loadloginData = async () => {
-  try {
-    const res = await fetch("/auth/me", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        "x-refresh-token": localStorage.getItem("refreshToken")
-      }
-    });
+  const res = await fetch(`${userApiUrl}/auth/me`, {
+    credentials: "include", // 쿠키 포함
+  });
 
-    const newAccessToken = res.headers.get("x-access-token");
-    if (newAccessToken) {
-      localStorage.setItem("accessToken", newAccessToken);
-    }
+  console.log("🔍  응답 상태:", res.status); // 200, 401 등
+  console.log("🔍  응답 OK 여부:", res.ok);
 
-    userInfo = await res.json();
-
-    const navBar = document.getElementById("navbar-brand");
-    const previousPageURL = document.referrer;
-
-    navBar.addEventListener("click", function () {
-      window.location.href = previousPageURL;
-    });
-
-    // 로그인 안 됐으면 로그인 창으로
-    if (!userInfo.loginStatus) {
-      alert("로그인 후에 게시글을 작성할 수 있습니다.");
-      window.location.href = `${apiUrl}/login`;
-      return;
-    }
-
-    setSelectCategory(userInfo.user_type);
-  } catch (error) {
-    console.error('작성자 회원 정보 불러오기 오류', error);
-    alert("로그인 정보를 불러오는 중 문제가 발생했습니다.");
-    window.location.href = `${apiUrl}/login`;
+  if (!res.ok) {
+    alert("로그인이 필요합니다.");
+    return;
   }
+  const data = await res.json();
+  console.log("✅  받아온 유저 정보:", data); // 실제 유저 정보 로그
+  userInfo = data; 
 };
 
 // 파일명을 생성하는 함수
