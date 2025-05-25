@@ -55,7 +55,7 @@ async function receiveUniversityData(queueName) {
     const msg = await channel.get(queueName, { noAck: false });
     if (msg) {
       const data = JSON.parse(msg.content.toString());
-      console.log(`[partner] ${queueName} 수신:`, data);
+      console.log(`[post] ${queueName} 수신:`, data);
       channel.ack(msg);
       return data;
     }

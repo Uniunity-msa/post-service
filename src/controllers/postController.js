@@ -52,7 +52,6 @@ const postController = {
             const university_url = req.body.university_url;
 
             await sendUniversityURL(university_url, 'SendUniversityName');
-
             const data = await receiveUniversityData('RecvPostUniversityName')
             console.log(data.university_name);
             return res.json(data.university_name);
@@ -69,8 +68,14 @@ const postController = {
 
       // MQ로 university_id 받아오기
       await sendUniversityURL(university_url, 'SendUniversityID');
-      const data = await receiveUniversityData('RecvPostUniversityID');
-      console.log("university_id: ", data.university_id)
+      const rawData = await receiveUniversityData('RecvPostUniversityID');
+      // 숫자면 객체로 감싸기
+      const data = typeof rawData === 'number'
+        ? { university_id: rawData }
+        : rawData;
+
+      console.log("[postall]university_id: ", data.university_id);
+
       const post = new Post();
       const response = await post.showPostListAll(data.university_id);
       return res.json(response);
@@ -113,8 +118,13 @@ const postController = {
 
       // MQ로 university_id 받아오기
       await sendUniversityURL(university_url, 'SendUniversityID');
-      const data = await receiveUniversityData('RecvPostUniversityID');
-
+      const rawData = await receiveUniversityData('RecvPostUniversityID');
+      
+      // 숫자면 객체로 감싸기
+      const data = typeof rawData === 'number'
+        ? { university_id: rawData }
+        : rawData
+      console.log("[showPostListbyCategory]university_id: ", data.university_id);
       const post = new Post();
       const response = await post.showPostListbyCategory(data.university_id, mappedCategory);
       return res.json(response);
