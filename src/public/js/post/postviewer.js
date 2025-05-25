@@ -8,25 +8,6 @@ var university_url;
 const navBar = document.getElementById("navbar-brand");
 let userInfo; // 유저정보
 
-// 작성자 회원 정보 불러오기
-// const loadloginData = async () => {
-//   const url = `${apiUrl}/loginStatus`;
-//   await fetch(url)
-//     .then((res) => res.json())
-//     .then((res) => {
-//       userInfo = res;
-//       const previousPageURL = document.referrer;
-
-//       navBar.addEventListener("click", function() {
-//         window.location.href = previousPageURL;
-//       });
-//     })
-//     .catch((error) => {
-//       console.error('작성자 회원 정보 불러오기 오류', error);
-//     });
-// };
-
-
 
 // 작성자 회원 정보 불러오기 (jwt방식으로 변경)
 const loadloginData = async () => {
@@ -44,8 +25,8 @@ const loadloginData = async () => {
   const data = await res.json();
   console.log("✅  받아온 유저 정보:", data); // 실제 유저 정보 로그
   userInfo = data; 
+  displayCommentNumFromPostInfo(); // 여기서 바로 호출해도 됨
 };
-
 
 
 
@@ -174,34 +155,31 @@ const loadPostData = async () => {
       }
 
       // 댓글 개수를 가져오는 함수
-      async function fetchCommentNum(post_id) {
-        try {
-          const response = await fetch(`/postCommentNum/${post_id}`);
-          if (!response.ok) {
-            throw new Error('서버 응답이 올바르지 않습니다.');
-          }
-          const data = await response.json();
-          if (data.status === 200) {
-            return data.result; // 댓글 개수를 반환
-          } else {
-            throw new Error(data.msg);
-          }
-        } catch (error) {
-          console.error('서버 응답 에러:', error);
-          return -1; // 에러 발생 시 -1을 반환하거나 에러 처리 방식을 선택
-        }
-      }
+      // async function fetchCommentNum(post_id) {
+      //   try {
+      //     const response = await fetch(`/postCommentNum/${post_id}`);
+      //     if (!response.ok) {
+      //       throw new Error('서버 응답이 올바르지 않습니다.');
+      //     }
+      //     const data = await response.json();
+      //     if (data.status === 200) {
+      //       return data.result; // 댓글 개수를 반환
+      //     } else {
+      //       throw new Error(data.msg);
+      //     }
+      //   } catch (error) {
+      //     console.error('서버 응답 에러:', error);
+      //     return -1; // 에러 발생 시 -1을 반환하거나 에러 처리 방식을 선택
+      //   }
+      // }
 
       // 댓글 개수를 표시하는 함수
-      async function displayCommentNum(post_id) {
-        const commentCountElement = document.getElementById('comment_count'); // 댓글 개수를 표시할 HTML 요소 선택
-        const commentCount = await fetchCommentNum(post_id); // 댓글 개수 가져오기
-        if (commentCount >= 0) {
-          commentCountElement.innerHTML = `<img width="24" height="24" src="https://img.icons8.com/color/48/speech-bubble-with-dots.png" style="margin-right: 0.3rem;" alt="speech-bubble-with-dots"/> ${commentCount}`;
-        } else {
-          commentCountElement.textContent = '댓글 개수를 가져오지 못했습니다.'; // 에러 처리 방식에 따라 메시지 표시
-        }
-      }
+      function displayCommentNumFromPostInfo() {
+        const commentCountElement = document.getElementById('comment_count');
+        commentCountElement.innerHTML = `
+          <img width="24" height="24" src="https://img.icons8.com/color/48/speech-bubble-with-dots.png" 
+              style="margin-right: 0.3rem;" alt="speech-bubble-with-dots"/> ${postInfo.comment_count}`;
+      }   
 
       // 페이지 로드 후 댓글 개수 표시
       window.addEventListener('DOMContentLoaded', function () {
@@ -478,9 +456,9 @@ const fetchComments = async () => {
       // 생성한 요소들을 commentInfoElement에 추가
       commentInfoElement.appendChild(userNickNameElement);
       commentInfoElement.appendChild(deleteCommentElement);
-      commentInfoElement.appendChild(userNickNameElement);
+     
       // commentInfoElement.appendChild(subdateLikeCountElement);
-      commentInfoElement.appendChild(deleteCommentElement);
+
 
       // 댓글 내용 표시
       const commentContentElement = document.createElement('p');
@@ -555,6 +533,7 @@ writeCommentBtn.addEventListener('click', function () {
  
             fetchComments();
             document.querySelector('.comment-form textarea').value = "";
+            displayCommentNum(postInfo.post_id); // 댓글 수 다시 불러오기 추가
             
           
 

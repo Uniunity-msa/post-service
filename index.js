@@ -17,8 +17,8 @@ app.set("view engine", "ejs");                        // EJS 사용
 app.use(express.static(path.join(__dirname, "src/public")));
 
 // EJS 뷰 렌더링 라우터
-app.get("/post/form", (req, res) => {
-  res.render("post/postform"); // src/views/post/postform.ejs
+app.get("/postform/:university_url", (req, res) => {
+  res.render("post/postform", { university_url: req.params.university_url });
 });
 
 app.get("/post/list", (req, res) => {

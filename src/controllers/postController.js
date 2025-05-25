@@ -213,8 +213,14 @@ const postController = {
         response = await postWithRabbitMQ.getUserScrapList();
     }
     return res.json(response);
-  }
+  },
 
+  //댓글
+  getComments: async (req, res) => {
+    const post = new Post();
+    const response = await post.getComments(req.params.post_id);
+    return res.json(response);
+  }
 
 };
 

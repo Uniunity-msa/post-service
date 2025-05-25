@@ -2,6 +2,7 @@
 
 const PostStorage = require("./postStorage");
 const UserClient = require("../utils/userClient");
+const ReactionClient = require("../utils/reactionClient");
 const amqp = require('amqplib/callback_api');
 const { v4: uuidv4 } = require('uuid');
 
@@ -325,6 +326,15 @@ async getUserScrapList() {
     return await PostStorage.updatePostScrapCount(post_id, -1);
   } catch (err) {
     return { result: false, msg: err.message || err };
+  }
+}
+
+async getComments(post_id) {
+  try {
+    const comments = await ReactionClient.getCommentsByPostId(post_id);
+    return comments;
+  } catch (err) {
+    return { success: false, msg: err.message || err };
   }
 }
 }
