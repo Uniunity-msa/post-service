@@ -70,7 +70,7 @@ const postController = {
       // MQ로 university_id 받아오기
       await sendUniversityURL(university_url, 'SendUniversityName');
       const data = await receiveUniversityData('RecvPostUniversityName');
-
+      console.log("university_id: ", data.university_id)
       const post = new Post();
       const response = await post.showPostListAll(data.university_id);
       return res.json(response);
