@@ -164,8 +164,8 @@ function uploadPost(postCategory) {
     },
     body: JSON.stringify(req),
   })
-    .then((res) => res.json())
-    .then(res => {
+    .then(async (res) => {
+    const data = await res.json();
       if (res.status === 201) {
         console.log("게시글 작성 완료");
         window.location.href = `/showPostListAll/${userInfo.university_url}`; // 리다이렉션 처리
