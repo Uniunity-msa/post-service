@@ -1,7 +1,5 @@
 var currentUrl = window.location.href;
 var post_id = currentUrl.split("/").pop();
-
-var userInfo; // 유저정보
 var university_url;
 var postWriterInfo;
 const writeCommentBtn = document.getElementById('write_comment_btn');

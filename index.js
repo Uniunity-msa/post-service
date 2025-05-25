@@ -32,10 +32,14 @@ app.get("/postviewer/:post_id", (req, res) => {
 app.get("/post/all/:university_url", (req, res) => {
   res.render("post/post", { university_url: req.params.university_url });
 });
+app.get("/showPostListAll/:university_url", (req, res) => {
+  res.render("post/post", { university_url: req.params.university_url });
+});
 
 app.get("/mypage/community/post/:category", (req, res) => {
   res.render("post/communityPost", { category: req.params.category });
 });
+
 
 
 // 실제 API 라우터
