@@ -55,9 +55,7 @@ const postController = {
 
             const data = await receiveUniversityData('RecvPostUniversityName')
             console.log(data.university_name);
-            return res.json({
-              university_name: data.university_name
-            });
+            return res.json(data.university_name);
     }catch (err) {
             console.error('getUniversityName error:', err);
             return res.status(500).json({ error: 'Internal Server Error' });
