@@ -3,31 +3,7 @@ const Editor = toastui.Editor;
 
 var userInfo; //유저정보
 
-// 작성자 회원 정보 불러오기
-// const loadloginData = () => {
-//   const url = `${apiUrl}/loginStatus`;
-//   fetch(url)
-//     .then((res) => res.json())
-//     .then(res => {
-//       userInfo = res;
-//       const navBar = document.getElementById("navbar-brand");
-//       const previousPageURL = document.referrer;
 
-//       navBar.addEventListener("click", function () {
-//         window.location.href = previousPageURL;
-//       });
-//       //로그인이 되지 않았을 경우 로그인 창으로 리다이렉션 
-//       if (!userInfo.loginStatus) {
-//         alert("로그인 후에 게시글을 작성할 수 있습니다.");
-//         window.location.href = `${apiUrl}/login`; // 로그인 페이지 URL로 리다이렉션
-//         return; // 리다이렉션 후 함수 종료
-//       }
-//       //유저 타입에 맞는 게시글 카테고리들만 나타나게함
-//       setSelectCategory(userInfo.user_type);
-//       return
-//     }
-//     )
-// }
 const loadloginData = async () => {
   const res = await fetch(`${userApiUrl}/auth/me`, {
     credentials: "include", // 쿠키 포함

@@ -1,5 +1,5 @@
 let userInfo; // 유저정보
-const userApiUrl = "http://34.47.84.123:3004";
+
 
 // 작성자 회원 정보 불러오기
 const loadloginData = async () => {
