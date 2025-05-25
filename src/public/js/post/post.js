@@ -48,22 +48,35 @@ const setLoginHeader = (res) => {
 const writePostBtn = document.getElementById('write_post_btn');
 const brandNav = document.getElementById('navbar-brand');
 
-writePostBtn.addEventListener('click', function () {
-  if (userInfo.loginStatus) {
+writePostBtn.addEventListener('click', async function () {
+  try {
+    // 1. 로그인된 사용자 정보를 확인하기 위해 /auth/me API 요청 (쿠키 포함)
+    const res = await fetch(`${userApiUrl}/auth/me`, {
+      credentials: "include", // 쿠키 포함해서 서버에 인증 요청
+    });
 
-    if (userInfo.university_url != university_url) {
-      alert("해당 대학교 재학생과 인근 상권 상인만 게시글 작성이 가능합니다.");
+    // 2. 응답이 실패면 로그인 안 된 상태 → 알림 후 종료
+    if (!res.ok) {
+      console.log("로그인이 필요한 서비스입니다"); // 콘솔 출력
+      alert("로그인 후에 게시글을 작성할 수 있습니다."); // 사용자에게 알림
+      return;
     }
-    else {
-      // 경로를 변경하고자 하는 URL로 설정합니다.
-      var newLocation = `${apiUrl}/postform/${userInfo.university_url}`;
 
-      // 현재 창의 경로를 변경합니다.
+    // 3. 응답 성공 → 사용자 정보 파싱
+    const user = await res.json();
+
+    // 4. 현재 페이지의 대학교 URL과 로그인한 사용자의 대학교가 다르면 작성 제한
+    if (user.university_url !== university_url) {
+      alert("해당 대학교 재학생과 인근 상권 상인만 게시글 작성이 가능합니다.");
+    } else {
+      // 5. 동일한 대학교라면 글 작성 페이지로 이동
+      const newLocation = `${apiUrl}/postform/${user.university_url}`;
       window.location.href = newLocation;
     }
-
-  } else {
-    alert("로그인 후에 게시글을 작성할 수 있습니다.");
+  } catch (err) {
+    // 6. 예기치 못한 오류 발생 시 콘솔에 에러 출력 + 사용자에게 알림
+    console.error("로그인 체크 중 오류:", err);
+    alert("로그인 확인 중 오류가 발생했습니다.");
   }
 });
 
