@@ -2,12 +2,12 @@
 
 const PostStorage = require("./postStorage");
 const UserClient = require("../utils/userClient");
-const ReactionClient = require("../utils/reactionClient");
 const amqp = require('amqplib/callback_api');
 const { v4: uuidv4 } = require('uuid');
 
 class Post {
-  constructor() {
+  constructor(data) {
+      this.body = data;
       this.channel = null;
   }
 
