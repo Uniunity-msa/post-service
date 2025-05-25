@@ -68,8 +68,8 @@ const postController = {
       const university_url = req.params.university_url;
 
       // MQ로 university_id 받아오기
-      await sendUniversityURL(university_url, 'SendUniversityName');
-      const data = await receiveUniversityData('RecvPostUniversityName');
+      await sendUniversityURL(university_url, 'SendUniversityID');
+      const data = await receiveUniversityData('RecvPostUniversityID');
       console.log("university_id: ", data.university_id)
       const post = new Post();
       const response = await post.showPostListAll(data.university_id);
@@ -112,8 +112,8 @@ const postController = {
       const university_url = req.params.university_url;
 
       // MQ로 university_id 받아오기
-      await sendUniversityURL(university_url, 'SendUniversityName');
-      const data = await receiveUniversityData('RecvPostUniversityName');
+      await sendUniversityURL(university_url, 'SendUniversityID');
+      const data = await receiveUniversityData('RecvPostUniversityID');
 
       const post = new Post();
       const response = await post.showPostListbyCategory(data.university_id, mappedCategory);
