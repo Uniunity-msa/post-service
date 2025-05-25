@@ -54,10 +54,9 @@ const postController = {
             await sendUniversityURL(university_url, 'SendUniversityName');
 
             const data = await receiveUniversityData('RecvPostUniversityName')
-            console.log(data.university_name, data.university_id);
+            console.log(data.university_name);
             return res.json({
-              university_name: data.university_name,
-              university_id: data.university_id
+              university_name: data.university_name
             });
     }catch (err) {
             console.error('getUniversityName error:', err);
