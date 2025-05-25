@@ -166,27 +166,27 @@ class PostStorage {
             });
         });
     }
-    // unversity_url 입력받아 university_id 보내기
-    static getUniversityUrlToID(university_url) {
-        return new Promise(async (resolve, reject) => {
-            pool.getConnection((err, connection) => {
-                if (err) {
-                    console.error('MySQL 연결 오류: ', err);
-                    reject(err)
-                }
+    // // unversity_url 입력받아 university_id 보내기
+    // static getUniversityUrlToID(university_url) {
+    //     return new Promise(async (resolve, reject) => {
+    //         pool.getConnection((err, connection) => {
+    //             if (err) {
+    //                 console.error('MySQL 연결 오류: ', err);
+    //                 reject(err)
+    //             }
 
-                pool.query("SELECT university_id FROM University WHERE university_url=?;", [university_url], function (err, rows) {
-                    pool.releaseConnection(connection);
-                    if (err) {
-                        console.error('Query 함수 오류', err);
-                        reject(err)
-                    }
-                    resolve(rows[0].university_id);
-                })
-            })
+    //             pool.query("SELECT university_id FROM University WHERE university_url=?;", [university_url], function (err, rows) {
+    //                 pool.releaseConnection(connection);
+    //                 if (err) {
+    //                     console.error('Query 함수 오류', err);
+    //                     reject(err)
+    //                 }
+    //                 resolve(rows[0].university_id);
+    //             })
+    //         })
 
-        });
-    }
+    //     });
+    // }
     //최신순 포스트 리스트 불러오기
     static getPostListAll(university_id, page = 1, pageSize = 10) {
         return new Promise(async (resolve, reject) => {
