@@ -54,8 +54,11 @@ const postController = {
             await sendUniversityURL(university_url, 'SendUniversityName');
 
             const data = await receiveUniversityData('RecvPostUniversityName')
-            console.log(data.university_name);
-            return res.json(data.university_name);
+            console.log(data.university_name, data.university_id);
+            return res.json({
+              university_name: data.university_name,
+              university_id: data.university_id
+            });
     }catch (err) {
             console.error('getUniversityName error:', err);
             return res.status(500).json({ error: 'Internal Server Error' });
@@ -64,9 +67,20 @@ const postController = {
 
   // 전체 게시글 목록 반환
   postAll: async (req, res) => {
-    const post = new Post();
-    const response = await post.showPostListAll(req.params.university_url);
-    return res.json(response);
+      try {
+      const university_url = req.params.university_url;
+
+      // MQ로 university_id 받아오기
+      await sendUniversityURL(university_url, 'SendUniversityName');
+      const data = await receiveUniversityData('RecvPostUniversityName');
+
+      const post = new Post();
+      const response = await post.showPostListAll(data.university_id);
+      return res.json(response);
+    } catch (err) {
+      console.error("postAll error:", err);
+      return res.status(500).json({ error: "학교 정보를 불러오지 못했습니다." });
+    }
   },
   // 단일 게시글 상세 조회
   showPost: async (req, res) => {
@@ -97,9 +111,20 @@ const postController = {
       return res.status(400).json({ error: "Invalid category" });
     }
 
-    const post = new Post();
-    const response = await post.showPostListbyCategory(req.params.university_url, mappedCategory);
-    return res.json(response);
+    try {
+      const university_url = req.params.university_url;
+
+      // MQ로 university_id 받아오기
+      await sendUniversityURL(university_url, 'SendUniversityName');
+      const data = await receiveUniversityData('RecvPostUniversityName');
+
+      const post = new Post();
+      const response = await post.showPostListbyCategory(data.university_id, mappedCategory);
+      return res.json(response);
+    } catch (err) {
+      console.error("카테고리별 게시글 조회 실패:", err);
+      return res.status(500).json({ error: "학교 정보를 불러오지 못했습니다." });
+    }
   },
 
   // 키워드 기반 게시글 검색

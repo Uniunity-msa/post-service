@@ -237,18 +237,16 @@ async getUserScrapList() {
     }
   }
 
-  async showPostListbyCategory(universityUrl, category) {
+  async showPostListbyCategory(universityId, category) {
     try {
-      const universityId = await PostStorage.getUniversityUrlToID(universityUrl);
       return await PostStorage.getPostListbyCategory(universityId, category);
     } catch (err) {
       return { success: false, msg: err };
     }
   }
 
-  async showPostListAll(universityUrl) {
+  async showPostListAll(universityId) {
     try {
-      const universityId = await PostStorage.getUniversityUrlToID(universityUrl);
       return await PostStorage.getPostListAll(universityId);
     } catch (err) {
       return { success: false, msg: err };
