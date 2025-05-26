@@ -49,13 +49,19 @@ const postWriter = async (post_id) => {
 // 게시글 수정, 삭제 버튼 보이는 조건
 async function showDeleteButtonIfNeeded() {
   await postWriter(post_id);
-  if (userInfo.user_email === postWriterInfo.user_email) {
-    deletePost.style.display = 'block'; 
-    modifyPost.style.display = 'block';
-  } else {
-    deletePost.style.display = 'none'; // 해당 요소를 숨기게 설정
-    modifyPost.style.display = 'none';
-  }
+  console.log("🧑‍💻 현재 로그인한 사용자 정보:", userInfo);
+  console.log("📝 게시글 작성자 정보:", postWriterInfo);
+  if (
+  userInfo &&
+  postWriterInfo &&
+  userInfo.user_email === postWriterInfo.user_email
+) {
+  modifyPost.style.display = 'block';
+  deletePost.style.display = 'block';
+} else {
+  modifyPost.style.display = 'none';
+  deletePost.style.display = 'none';
+}
 }
 
 
