@@ -19,13 +19,14 @@ const loadloginData = async () => {
   console.log("🔍  응답 OK 여부:", res.ok);
 
   if (!res.ok) {
-    alert("로그인이 필요합니다.");
+    console.log("로그인 안 된 사용자로 감지됨");
+    userInfo = null;
     return;
   }
   const data = await res.json();
   console.log("✅  받아온 유저 정보:", data); // 실제 유저 정보 로그
   userInfo = data; 
-  displayCommentNumFromPostInfo(); // 여기서 바로 호출해도 됨
+  
 };
 
 
@@ -174,7 +175,7 @@ const loadPostData = async () => {
       // }
 
       // 댓글 개수를 표시하는 함수
-      function displayCommentNumFromPostInfo() {
+      function displayCommentNum() {
         const commentCountElement = document.getElementById('comment_count');
         commentCountElement.innerHTML = `
           <img width="24" height="24" src="https://img.icons8.com/color/48/speech-bubble-with-dots.png" 
@@ -184,7 +185,7 @@ const loadPostData = async () => {
       // 페이지 로드 후 댓글 개수 표시
       window.addEventListener('DOMContentLoaded', function () {
         const post_id = postInfo.post_id;
-        displayCommentNum(post_id);
+        displayCommentNum();
       });
 
       const viewer = toastui.Editor.factory({
@@ -533,7 +534,7 @@ writeCommentBtn.addEventListener('click', function () {
  
             fetchComments();
             document.querySelector('.comment-form textarea').value = "";
-            displayCommentNum(postInfo.post_id); // 댓글 수 다시 불러오기 추가
+            displayCommentNum(); // 댓글 수 다시 불러오기 추가
             
           
 
