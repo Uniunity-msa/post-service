@@ -79,7 +79,8 @@ const loadPostData = async () => {
     const response = await fetch(url);
     const data = await response.json();
     postInfo = data;
-
+    console.log("postInfo: ", postInfo);
+  
     const postTitle = document.getElementById('post_title');
     const postCategory = document.getElementById('post_category');
     const postDate = document.getElementById('post_date');
@@ -174,19 +175,12 @@ const loadPostData = async () => {
       //   }
       // }
 
-      // 댓글 개수를 표시하는 함수
-      function displayCommentNum() {
-        const commentCountElement = document.getElementById('comment_count');
-        commentCountElement.innerHTML = `
-          <img width="24" height="24" src="https://img.icons8.com/color/48/speech-bubble-with-dots.png" 
-              style="margin-right: 0.3rem;" alt="speech-bubble-with-dots"/> ${postInfo.comment_count}`;
-      }   
 
       // 페이지 로드 후 댓글 개수 표시
-      window.addEventListener('DOMContentLoaded', function () {
-        const post_id = postInfo.post_id;
-        displayCommentNum();
-      });
+      // window.addEventListener('DOMContentLoaded', function () {
+      //   const post_id = postInfo.post_id;
+      //   displayCommentNum();
+      // });
 
       const viewer = toastui.Editor.factory({
         el: document.querySelector('.toast-custom-viewer'),
