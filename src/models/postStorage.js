@@ -3,6 +3,7 @@ const { reject } = require("underscore");
 
 const { pool } = require("../config/db");
 const { uploadImageToGCS } = require("../utils/gcsUploader");
+const { connect } = require("amqplib");
 
 
 
@@ -561,6 +562,20 @@ static getUserScrapList(post_ids) {
         });
     });
 }
+
+    static getImagesInfo(university_id) {
+        console.log('postStorage.getImagesInfo 실행');
+        return new Promise(async (resolve, reject) => {
+            pool.getConnection((err, connection) => {
+                if (err) {
+                    console.error('MySQL 연결 오류: ', err);
+                    reject(err)
+                }
+
+                pool.query()
+            })
+        })
+    }
 
 
 }

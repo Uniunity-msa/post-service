@@ -325,14 +325,25 @@ async getUserScrapList(user_email) {
   }
 }
 
-async getComments(post_id) {
+  async getComments(post_id) {
   try {
     const comments = await ReactionClient.getCommentsByPostId(post_id);
     return comments;
   } catch (err) {
     return { success: false, msg: err.message || err };
   }
-}
+  }
+
+  //start-service 요청 처리: postId, imgUrl 보내기
+  async getImagesInfo(university_id) {
+    try{
+      console.log('model/post.getImagesInfo 실행');
+      const response = await PostStorage.getImagesInfo(university_id);
+      return response;
+    } catch (err) {
+      return {success:false ,msg:err};
+    }
+  }
 }
         
 

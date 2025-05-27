@@ -1,9 +1,13 @@
 const amqp = require("amqplib");
+const Post = require('../models/post');
 
 const RECV_QUEUES = [
   'RecvPostUniversityName',
   'RecvPostUniversityID'
-  
+];
+
+const SEND_QUEUES = [
+  'SendPostInfo'
 ];
 
 let channel;
@@ -65,6 +69,17 @@ async function receiveUniversityData(queueName) {
 
   throw new Error(`${queueName} 큐에서 메시지를 받지 못했습니다.`);
 }
+
+//start-service가 보낸 요청 처리
+function consumeMessages () {
+  channel.consume('SendPostInfo', async (msg) => {
+    const { university_id } = JSON.parse(msg.content.toString());
+    const post = new Post();
+    const result = await post.getImagesInfo(university_id);
+    reply(msg, result);
+  })
+}
+
 module.exports = {
   sendUniversityURL,
   receiveUniversityData
