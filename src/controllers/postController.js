@@ -201,18 +201,29 @@ const postController = {
 
   // 마이페이지 → 내가 작성한 글 / 댓글 단 글 / 좋아요 / 스크랩 글 조회
   myCommunityPostData: async (req, res) => {
-    const category = req.params.category;
-    let response;
-    if (category === '1') {
-        response = await postWithRabbitMQ.myCommunityPost();
-    } else if (category === '2') {
-        response = await postWithRabbitMQ.myCommunityCommentPost();
-    } else if (category === '3') {
-        response = await postWithRabbitMQ.getUserHeartList();
-    } else if (category === '4') {
-        response = await postWithRabbitMQ.getUserScrapList();
+    try {
+      // 쿠키를 통해 사용자 정보 가져오기
+      const user = await fetchUserInfoFromUserService(req.headers.cookie);
+      const user_email = user.user_email;
+  
+      let response;
+      if (req.params.category === '1') {
+        response = await postWithRabbitMQ.myCommunityPost(user_email);
+      } else if (req.params.category === '2') {
+        response = await postWithRabbitMQ.myCommunityCommentPost(user_email);
+      } else if (req.params.category === '3') {
+        response = await postWithRabbitMQ.getUserHeartList(user_email);
+      } else if (req.params.category === '4') {
+        response = await postWithRabbitMQ.getUserScrapList(user_email);
+      } else {
+        return res.status(400).json({ error: 'Invalid category' });
+      }
+  
+      return res.json(response);
+    } catch (err) {
+      console.error('myCommunityPostData error:', err);
+      return res.status(401).json({ message: '로그인이 필요합니다.' });
     }
-    return res.json(response);
   },
 
   //댓글
