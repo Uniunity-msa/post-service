@@ -11,6 +11,7 @@ const navBar = document.getElementById("navbar-brand");
 let userInfo; // 유저정보
 const postApiUrl = baseUrls.post;
 const userApiUrl = baseUrls.user;
+const reactionApiUrl = baseUrls.reaction;
 
 // 작성자 회원 정보 불러오기 (jwt방식으로 변경)
 const loadloginData = async () => {
@@ -233,7 +234,7 @@ const loadPostData = async () => {
         post_id: postID,
         user_email: userInfo.user_email
       };
-      fetch(`${postApiUrl}/checkHeart`, {
+      fetch(`${reactionApiUrl}/checkHeart`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -243,7 +244,7 @@ const loadPostData = async () => {
         .then((res) => res.json())
       .then(res => {
         if (res.result == false) {
-          fetch(`${postApiUrl}/addHeart`, {
+          fetch(`${reactionApiUrl}/addHeart`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -299,7 +300,7 @@ const loadPostData = async () => {
       post_id: postID,
       user_email: userInfo.user_email
     };
-    fetch(`${postApiUrl}/checkScrap`, {
+    fetch(`${reactionApiUrl}/checkScrap`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -315,7 +316,7 @@ const loadPostData = async () => {
       .then(res => {
         // 사용자가 해당게시글에 스크랩를 누르지 않았을 경우 -> 스크랩 추가
         if (res.result == false) {
-          fetch(`${postApiUrl}/addScrap`, {
+          fetch(`${reactionApiUrl}/addScrap`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
