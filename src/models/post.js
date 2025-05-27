@@ -43,7 +43,7 @@ class Post {
   }
 
 //(마이페이지)내가 댓글 작성한 게시글 불러오기
-async myCommunityCommentPost() {
+async myCommunityCommentPost(user_email) {
 try {
   const correlationId = uuidv4();
 
@@ -55,9 +55,7 @@ try {
     });
   });
 
-  const message = { 
-    email: '20211138@sungshin.ac.kr', // 실제 email을 동적으로 받을 경우 수정 필요
-  };
+  const message = { user_email};
 
   // 응답 대기 
   const response = await new Promise((resolve, reject) => {
@@ -89,14 +87,13 @@ try {
 }}
 
 // 마이페이지) 유저 좋아요 목록 보기
-async getUserHeartList() {
+async getUserHeartList(user_email) {
   try {
     if (!this.channel) {
       throw new Error('채널이 아직 초기화되지 않았습니다.');
     }
 
     const correlationId = uuidv4();
-    const email = '20211151@sungshin.ac.kr';  // 실제 email을 동적으로 받을 경우 수정 필요
 
     // 임시 응답 큐 생성
     const tempQueue = await new Promise((resolve, reject) => {
@@ -106,7 +103,7 @@ async getUserHeartList() {
       });
     });
 
-    const message = { email };
+    const message = { user_email };
 
     // 응답 대기
     const response = await new Promise((resolve, reject) => {
@@ -139,14 +136,13 @@ async getUserHeartList() {
 
 
 // 마이페이지) 유저 스크랩 목록 보기
-async getUserScrapList() {
+async getUserScrapList(user_email) {
   try {
     if (!this.channel) {
       throw new Error('채널이 아직 초기화되지 않았습니다.');
     }
 
     const correlationId = uuidv4();
-    const email = '20211138@sungshin.ac.kr';  // 실제 email을 동적으로 받을 경우 수정 필요
 
     // 임시 응답 큐 생성
     const tempQueue = await new Promise((resolve, reject) => {
@@ -156,7 +152,7 @@ async getUserScrapList() {
       });
     });
 
-    const message = { email };
+    const message = { user_email };
 
     // 응답 대기
     const response = await new Promise((resolve, reject) => {
@@ -274,9 +270,9 @@ async getUserScrapList() {
   }
 
    //마이페이지-내가 작성한 게시글 보기
-   async myCommunityPost() {
+   async myCommunityPost(user_email) {
     try {
-        const response = await PostStorage.getMyPost('20211138@sungshin.ac.kr');
+        const response = await PostStorage.getMyPost(user_email);
         return response;
     } catch (err) {
         return {

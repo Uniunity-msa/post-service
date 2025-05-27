@@ -4,27 +4,42 @@ const loginStatusBtn = document.getElementById("loginStatusBtn");
 const signUpBtn = document.getElementById("signUpBtn");
 const navBar = document.getElementById("navbar");
 
-const postApiUrl = baseUrls.post;
-const userApiUrl = baseUrls.user;
-
+// 유저 로그인 상태 확인 및 정보 로드
 const fetchLoginData = async () => {
-    const url = `${postApiUrl}/loginStatus`;
-    await fetch(url)
-        .then((res) => res.json())
-        .then(res => {
-            console.log(res);
-            userInfo = res;
-            setLoginHeader(res)
+    try {
+        const url = `${userServiceUrl}/auth/me`; 
+
+        const res = await fetch(url, {
+            credentials: "include",
+        });
+
+        const data = await res.json();
+
+        if (!data.loginStatus) {
+            alert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
+            window.location.href = "/login";
+            return;
         }
-        )
-}
+
+        userInfo = data; // user_email, university_url 등 저장
+        setLoginHeader(data);
+
+        // 유저 정보를 안전하게 받은 뒤 post 데이터 요청
+        fetchPostData();
+
+    } catch (error) {
+        console.error("로그인 정보 확인 실패:", error);
+        alert("서버 문제로 로그인 정보를 확인하지 못했습니다.");
+        window.location.href = "/login";
+    }
+};
 
 const setLoginHeader = (res) => {
     navBar.setAttribute("href", `${postApiUrl}`);
     if (res.loginStatus) {
-        loginStatusBtn.setAttribute("href", `${postApiUrl}/logout`);
+        loginStatusBtn.setAttribute("href", `${userServiceUrl}/logout`);
         loginStatusBtn.innerText = "로그아웃"
-        signUpBtn.setAttribute("href", `${postApiUrl}/council/${res.university_url}`);
+        signUpBtn.setAttribute("href", `${startServiceUrl}/council/${res.university_url}`);
         signUpBtn.innerText = "나의학교"
     }
     else {
@@ -38,12 +53,11 @@ const fetchPostData = async () => {
 
     let frontend_url = window.location.href;
     let category = frontend_url.split('/')[6];
+
     let req = {
-        user_email: '20211138@sungshin.ac.kr' // 사용자 이메일 받아오도록 수정 //
+        user_email: userInfo.user_email // 사용자 이메일 받아오도록 수정 //
     }
-    // let req = {
-    //     user_email: userInfo.user_email // 사용자 이메일 받아오도록 수정 //
-    // }
+
     const commnunityPostTitle = document.getElementById("community_post_title")
     if (category === '1') {
         commnunityPostTitle.textContent = '내가 작성한 게시글'
