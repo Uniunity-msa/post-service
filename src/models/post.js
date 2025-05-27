@@ -253,11 +253,11 @@ async getUserScrapList(user_email) {
   async showPost(postId) {
     try {
       const response = await PostStorage.getPost(postId);
-      const userInfo = await UserClient.getUserInfo(response.user_email);
-      response.user_nickname = userInfo.user_nickname;
+      // 이미 user_nickname이 포함되어 있으므로 따로 가져올 필요 없음
       return response;
     } catch (err) {
-      return { err };
+      console.error("showPost 내부 에러:", err);
+      return { err: err.message || "게시글 조회 중 오류 발생" };
     }
   }
 

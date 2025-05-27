@@ -19,13 +19,14 @@ const loadloginData = async () => {
   console.log("🔍  응답 OK 여부:", res.ok);
 
   if (!res.ok) {
-    alert("로그인이 필요합니다.");
+    console.log("로그인 안 된 사용자로 감지됨");
+    userInfo = null;
     return;
   }
   const data = await res.json();
   console.log("✅  받아온 유저 정보:", data); // 실제 유저 정보 로그
   userInfo = data; 
-  displayCommentNumFromPostInfo(); // 여기서 바로 호출해도 됨
+  
 };
 
 
@@ -48,13 +49,19 @@ const postWriter = async (post_id) => {
 // 게시글 수정, 삭제 버튼 보이는 조건
 async function showDeleteButtonIfNeeded() {
   await postWriter(post_id);
-  if (userInfo.user_email === postWriterInfo.user_email) {
-    deletePost.style.display = 'block'; 
-    modifyPost.style.display = 'block';
-  } else {
-    deletePost.style.display = 'none'; // 해당 요소를 숨기게 설정
-    modifyPost.style.display = 'none';
-  }
+  console.log("🧑‍💻 현재 로그인한 사용자 정보:", userInfo);
+  console.log("📝 게시글 작성자 정보:", postWriterInfo);
+  if (
+  userInfo &&
+  postWriterInfo &&
+  userInfo.user_email === postWriterInfo.user_email
+) {
+  modifyPost.style.display = 'block';
+  deletePost.style.display = 'block';
+} else {
+  modifyPost.style.display = 'none';
+  deletePost.style.display = 'none';
+}
 }
 
 
@@ -78,7 +85,8 @@ const loadPostData = async () => {
     const response = await fetch(url);
     const data = await response.json();
     postInfo = data;
-
+    console.log("postInfo: ", postInfo);
+  
     const postTitle = document.getElementById('post_title');
     const postCategory = document.getElementById('post_category');
     const postDate = document.getElementById('post_date');
@@ -173,19 +181,12 @@ const loadPostData = async () => {
       //   }
       // }
 
-      // 댓글 개수를 표시하는 함수
-      function displayCommentNumFromPostInfo() {
-        const commentCountElement = document.getElementById('comment_count');
-        commentCountElement.innerHTML = `
-          <img width="24" height="24" src="https://img.icons8.com/color/48/speech-bubble-with-dots.png" 
-              style="margin-right: 0.3rem;" alt="speech-bubble-with-dots"/> ${postInfo.comment_count}`;
-      }   
 
       // 페이지 로드 후 댓글 개수 표시
-      window.addEventListener('DOMContentLoaded', function () {
-        const post_id = postInfo.post_id;
-        displayCommentNum(post_id);
-      });
+      // window.addEventListener('DOMContentLoaded', function () {
+      //   const post_id = postInfo.post_id;
+      //   displayCommentNum();
+      // });
 
       const viewer = toastui.Editor.factory({
         el: document.querySelector('.toast-custom-viewer'),
@@ -533,7 +534,7 @@ writeCommentBtn.addEventListener('click', function () {
  
             fetchComments();
             document.querySelector('.comment-form textarea').value = "";
-            displayCommentNum(postInfo.post_id); // 댓글 수 다시 불러오기 추가
+            displayCommentNum(); // 댓글 수 다시 불러오기 추가
             
           
 
