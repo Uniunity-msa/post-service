@@ -1,6 +1,7 @@
 //글 에디터
 const Editor = toastui.Editor;
-
+const postApiUrl = baseUrls.post;
+const userApiUrl = baseUrls.user;
 var userInfo; //유저정보
 
 
@@ -63,7 +64,7 @@ function generateEditor(initialContent) {
           //   파일 업로드 API 호출
           loading = true;
           setLoading(loading);
-          const response = await fetch(`${apiUrl}/file`, {
+          const response = await fetch(`${postApiUrl}/file`, {
             method: 'POST',
             body: formData,
           });
@@ -157,7 +158,7 @@ function uploadPost(postCategory) {
   };
   console.log(req);
 
-  fetch(`${apiUrl}/uploadPost`, {
+  fetch(`${postApiUrl}/uploadPost`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -187,7 +188,7 @@ function modifyPost(postId,postCategory){
     category: postCategory,
   };
 
-  fetch(`${apiUrl}/modifyPost`, {
+  fetch(`${postApiUrl}/modifyPost`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -291,7 +292,7 @@ function updateStore() {
     university_url: universityUrl
   };
 
-  fetch(`${apiUrl}/uploadPartner`, {
+  fetch(`${postApiUrl}/uploadPartner`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -319,7 +320,7 @@ function loadPartnerUpload() {
     university_url: universityUrl
   };
 
-  fetch(`${apiUrl}/getUniversityLocation`, {
+  fetch(`${postApiUrl}/getUniversityLocation`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -377,7 +378,7 @@ var postInfo; // 게시글 정보
 // 게시글 정보 불러오기
 const loadPostData = async (post_id) => {
   try {
-    const url = `${apiUrl}/showPost/${post_id}`;
+    const url = `${postApiUrl}/showPost/${post_id}`;
     const response = await fetch(url);
     const data = await response.json();
     postInfo = data;

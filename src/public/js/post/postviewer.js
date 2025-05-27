@@ -7,7 +7,8 @@ var domain;
 var university_url;
 const navBar = document.getElementById("navbar-brand");
 let userInfo; // 유저정보
-
+const postApiUrl = baseUrls.post;
+const userApiUrl = baseUrls.user;
 
 // 작성자 회원 정보 불러오기 (jwt방식으로 변경)
 const loadloginData = async () => {
@@ -33,7 +34,7 @@ const loadloginData = async () => {
 
 // 게시글 작성자 이메일 가져오기
 const postWriter = async (post_id) => {
-  const url = `${apiUrl}/getPostWriter/${post_id}`;
+  const url = `${postApiUrl}/getPostWriter/${post_id}`;
   try {
     const response = await fetch(url);
     const data = await response.json();
@@ -81,7 +82,7 @@ var postInfo; // 게시글 정보
 // 게시글 정보 불러오기
 const loadPostData = async () => {
   try {
-    const url = `${apiUrl}/showPost/${post_id}`;
+    const url = `${postApiUrl}/showPost/${post_id}`;
     const response = await fetch(url);
     const data = await response.json();
     postInfo = data;
@@ -230,7 +231,7 @@ const loadPostData = async () => {
         post_id: postID,
         user_email: userInfo.user_email
       };
-      fetch(`${apiUrl}/checkHeart`, {
+      fetch(`${postApiUrl}/checkHeart`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -246,7 +247,7 @@ const loadPostData = async () => {
         .then(res => {
           // 사용자가 해당게시글에 하트를 누르지 않았을 경우 -> 하트 추가
           if (res.result == false) {
-            fetch(`${apiUrl}/addHeart`, {
+            fetch(`${postApiUrl}/addHeart`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -268,7 +269,7 @@ const loadPostData = async () => {
           }
           // 사용자가 해당게시글에 하트를 눌렀을 경우 -> 하트 삭제
           else {
-            fetch(`${apiUrl}/deleteHeart/${res.result.heart_id}`)
+            fetch(`${postApiUrl}/deleteHeart/${res.result.heart_id}`)
               .then((res) => {
                 if (!res.ok) {
                   throw new Error('Network response was not ok');
@@ -308,7 +309,7 @@ const loadPostData = async () => {
         post_id: postID,
         user_email: userInfo.user_email
       };
-      fetch(`${apiUrl}/checkScrap`, {
+      fetch(`${postApiUrl}/checkScrap`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -324,7 +325,7 @@ const loadPostData = async () => {
         .then(res => {
           // 사용자가 해당게시글에 스크랩를 누르지 않았을 경우 -> 스크랩 추가
           if (res.result == false) {
-            fetch(`${apiUrl}/addScrap`, {
+            fetch(`${postApiUrl}/addScrap`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -346,7 +347,7 @@ const loadPostData = async () => {
           }
           // 사용자가 해당게시글에 스크랩를 눌렀을 경우 -> 스크랩 삭제
           else {
-            fetch(`${apiUrl}/deleteScrap/${res.result.scrap_id}`)
+            fetch(`${postApiUrl}/deleteScrap/${res.result.scrap_id}`)
               .then((res) => {
                 if (!res.ok) {
                   throw new Error('Network response was not ok');
@@ -396,7 +397,7 @@ const fetchComments = async () => {
   }
 
   try {
-    const response = await fetch(`${apiUrl}/showComment/postviewer/${post_id}`);
+    const response = await fetch(`${postApiUrl}/showComment/postviewer/${post_id}`);
     const data = await response.json();
     const deleteIconImageUrl = 'https://img.icons8.com/?size=512&id=heybTkWFZ8KQ&format=png';
 
@@ -510,7 +511,7 @@ writeCommentBtn.addEventListener('click', function () {
     }
     else if (commentContent.trim().length > 0) {
       // 댓글 등록 API 호출
-      fetch(`${apiUrl}/uploadComment/postviewer`, {
+      fetch(`${postApiUrl}/uploadComment/postviewer`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -618,7 +619,7 @@ const fetchDeletePost = async (post_id, user_email) => {
     if (data.result === true) {
       alert("게시글이 성공적으로 삭제되었습니다.");
       // 삭제 성공 후 추가 작업이 필요하면 이곳에 추가
-      window.location.href = `${apiUrl}/showPostListALL/${userInfo.university_url}`;
+      window.location.href = `${postApiUrl}/showPostListALL/${userInfo.university_url}`;
     } else {
       console.error('게시글 삭제 실패:', data.err);
       alert("게시글 삭제에 실패하였습니다.");
@@ -687,7 +688,7 @@ const fetchDeleteComment = async (user_email, comment_id) => {
 
     if (data.result === true) {
       alert("댓글이 성공적으로 삭제되었습니다.");
-      window.location.href = `${apiUrl}/postviewer/${post_id}`;
+      window.location.href = `${postApiUrl}/postviewer/${post_id}`;
     } else {
       console.error('댓글 삭제 실패:', data.err);
       alert("댓글 삭제에 실패하였습니다.");

@@ -4,8 +4,11 @@ const loginStatusBtn = document.getElementById("loginStatusBtn");
 const signUpBtn = document.getElementById("signUpBtn");
 const navBar = document.getElementById("navbar");
 
+const postApiUrl = baseUrls.post;
+const userApiUrl = baseUrls.user;
+
 const fetchLoginData = async () => {
-    const url = `${apiUrl}/loginStatus`;
+    const url = `${postApiUrl}/loginStatus`;
     await fetch(url)
         .then((res) => res.json())
         .then(res => {
@@ -17,11 +20,11 @@ const fetchLoginData = async () => {
 }
 
 const setLoginHeader = (res) => {
-    navBar.setAttribute("href", `${apiUrl}`);
+    navBar.setAttribute("href", `${postApiUrl}`);
     if (res.loginStatus) {
-        loginStatusBtn.setAttribute("href", `${apiUrl}/logout`);
+        loginStatusBtn.setAttribute("href", `${postApiUrl}/logout`);
         loginStatusBtn.innerText = "로그아웃"
-        signUpBtn.setAttribute("href", `${apiUrl}/council/${res.university_url}`);
+        signUpBtn.setAttribute("href", `${postApiUrl}/council/${res.university_url}`);
         signUpBtn.innerText = "나의학교"
     }
     else {
@@ -53,7 +56,7 @@ const fetchPostData = async () => {
     }
 
 
-    const url = `${apiUrl}/mypage/community/post/${category}`;
+    const url = `${postApiUrl}/mypage/community/post/${category}`;
 
     console.log("api 요청 주소:", url);
 console.log("요청 바디:", req);
@@ -145,7 +148,7 @@ function createCard(data) {
                 <h2 class="card-title h4 mt-2">${data.post_title}</h2>
             </div>
             <div>
-                <a class="btn read-more-btn btn-outline-secondary" href="${apiUrl}/postviewer/${data.post_id}">게시글 보러가기 →</a>
+                <a class="btn read-more-btn btn-outline-secondary" href="${postApiUrl}/postviewer/${data.post_id}">게시글 보러가기 →</a>
             </div>
         </div>
 

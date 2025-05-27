@@ -1,5 +1,6 @@
 let userInfo; // 유저정보
-
+const postApiUrl = baseUrls.post;
+const userApiUrl = baseUrls.user;
 
 // 작성자 회원 정보 불러오기
 const loadloginData = async () => {
@@ -28,20 +29,20 @@ const navBar = document.getElementById("navbar-brand");
 const universityName = document.getElementById("university_name");
 
 const setLoginHeader = (res) => {
-  navBar.setAttribute("href", `${apiUrl}/showPostListAll/${university_url}`);
+  navBar.setAttribute("href", `${postApiUrl}/showPostListAll/${university_url}`);
   if (res.user_email) {
-    loginStatusBtn.setAttribute("href", `${apiUrl}/logout`);
+    loginStatusBtn.setAttribute("href", `${postApiUrl}/logout`);
     loginStatusBtn.innerText = "로그아웃"
-    signUpBtn.setAttribute("href", `${apiUrl}/mypage`);
+    signUpBtn.setAttribute("href", `${postApiUrl}/mypage`);
     signUpBtn.innerText = "마이페이지"
-    backBtn.setAttribute("href", `${apiUrl}/council/${university_url}`);
+    backBtn.setAttribute("href", `${postApiUrl}/council/${university_url}`);
   }
   else {
-    loginStatusBtn.setAttribute("href", `${apiUrl}/login`);
+    loginStatusBtn.setAttribute("href", `${postApiUrl}/login`);
     loginStatusBtn.innerText = "로그인"
-    signUpBtn.setAttribute("href", `${apiUrl}/signup/agreement`);
+    signUpBtn.setAttribute("href", `${postApiUrl}/signup/agreement`);
     signUpBtn.innerText = "회원가입"
-    backBtn.setAttribute("href", `${apiUrl}/council/${university_url}`);
+    backBtn.setAttribute("href", `${postApiUrl}/council/${university_url}`);
   }
 
 }
@@ -70,7 +71,7 @@ writePostBtn.addEventListener('click', async function () {
       alert("해당 대학교 재학생과 인근 상권 상인만 게시글 작성이 가능합니다.");
     } else {
       // 5. 동일한 대학교라면 글 작성 페이지로 이동
-      const newLocation = `${apiUrl}/postform/${user.university_url}`;
+      const newLocation = `${postApiUrl}/postform/${user.university_url}`;
       window.location.href = newLocation;
     }
   } catch (err) {
@@ -91,7 +92,7 @@ function getUniversityName() {
   const req = {
     university_url: universityUrl
   };
-  fetch(`${apiUrl}/getUniversityName`, {
+  fetch(`${postApiUrl}/getUniversityName`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -125,7 +126,7 @@ const row = document.querySelector('.row');
 const col = document.querySelector('.col');
 
 affiliateRegistrationBtn.addEventListener('click', function () {
-  window.location.href = `${apiUrl}/partner/${university_url}`; // 제휴 등록은 제휴가게 페이지로 이동
+  window.location.href = `${postApiUrl}/partner/${university_url}`; // 제휴 등록은 제휴가게 페이지로 이동
   return; // 리다이렉션 후 함수 종료
 })
 
@@ -173,7 +174,7 @@ const fetchpostAllData = async () => {
   currentCategory = "";
   const startIndex = (currentPage - 1) * postsPerPage;
   const endIndex = startIndex + postsPerPage;
-  const url = `${apiUrl}/postAll/${university_url}`;
+  const url = `${postApiUrl}/postAll/${university_url}`;
   const response = await fetch(url);
   const data = await response.json();
   dataLength = data.length;
@@ -241,7 +242,7 @@ const fetchPosts = async (category, university_url) => {
   }
 
   try {
-    const url = `${apiUrl}/showPostListbyCategory/${category}/${university_url}`;
+    const url = `${postApiUrl}/showPostListbyCategory/${category}/${university_url}`;
 
     const response = await fetch(url);
     const data = await response.json();
@@ -305,7 +306,7 @@ function createCard(data) {
               <h2 class="card-title h4 mt-2">${data.post_title}</h2>
           </div>
           <div>
-          <a class="btn read-more-btn btn-outline-secondary" id="read_more_btn" href="${apiUrl}/postviewer/${data.post_id}" onclick="increaseViewCount(${data.post_id});">게시글 보러가기 →</a>
+          <a class="btn read-more-btn btn-outline-secondary" id="read_more_btn" href="${postApiUrl}/postviewer/${data.post_id}" onclick="increaseViewCount(${data.post_id});">게시글 보러가기 →</a>
           </div>
       </div>
 
@@ -347,7 +348,7 @@ const cardContainer = document.getElementById("card_container");
 
 function searchPost() {
   const universityUrl = getUniversityUrl();
-  fetch(`${apiUrl}/getUniversityID/${universityUrl}`)
+  fetch(`${postApiUrl}/getUniversityID/${universityUrl}`)
     .then((response) => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -359,7 +360,7 @@ function searchPost() {
       university_posts.push(response);
       // 검색한 게시글 불러오기
       const keyword = document.getElementById('postSearchInput').value;
-      fetch(`${apiUrl}/searchPost/${keyword}`)
+      fetch(`${postApiUrl}/searchPost/${keyword}`)
         .then((res) => {
           if (!res.ok) {
             throw new Error('Network response was not ok');
@@ -602,7 +603,7 @@ document.addEventListener('DOMContentLoaded', function () {
 // read more버튼 누르면 조회수 1 증가 -> db에 요청
 const increaseViewCount = async (post_id) => {
   try {
-    const url = `${apiUrl}/increaseViewCount/${post_id}`;
+    const url = `${postApiUrl}/increaseViewCount/${post_id}`;
     await fetch(url)
       .then((res) => res.json())
       .then(res => {
