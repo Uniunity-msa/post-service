@@ -289,9 +289,11 @@ const loadPostData = async () => {
 
   // 스크랩추가 기능
   function addScrap() {
-  if (userInfo.loginStatus === false) {
+    if (userInfo.loginStatus === false) {
     alert("로그인 후에 기능을 사용할 수 있습니다.");
-  } else {
+  }
+  else {
+    //사용자가 이미 해당 게시글에 스크랩를 눌렀는지 확인
     const postID = getPostID();
     const req = {
       post_id: postID,
@@ -304,8 +306,14 @@ const loadPostData = async () => {
       },
       body: JSON.stringify(req),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return res.json();
+      })
       .then(res => {
+        // 사용자가 해당게시글에 스크랩를 누르지 않았을 경우 -> 스크랩 추가
         if (res.result == false) {
           fetch(`${postApiUrl}/addScrap`, {
             method: "POST",
@@ -314,33 +322,51 @@ const loadPostData = async () => {
             },
             body: JSON.stringify(req),
           })
-            .then((res) => res.json())
+            .then((res) => {
+              if (!res.ok) {
+                throw new Error('Network response was not ok');
+              }
+              return res.json();
+            })
             .then(async res => {
-              alert("스크랩 목록에 추가 되었습니다.");
-              // ✅ 스크랩 수 증가
+              // 스크랩 수 증가
               await fetch(`${postApiUrl}/increaseScrap`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ post_id: postID })
               });
+              alert("스크랩 목록에 추가 되었습니다.");
             })
-            .catch(console.error);
-        } else {
+            .catch((error) => {
+              console.error('There has been a problem with your fetch operation:', error);
+            });
+        }
+        // 사용자가 해당게시글에 스크랩를 눌렀을 경우 -> 스크랩 삭제
+        else {
           fetch(`${postApiUrl}/deleteScrap/${res.result.scrap_id}`)
-            .then((res) => res.json())
+            .then((res) => {
+              if (!res.ok) {
+                throw new Error('Network response was not ok');
+              }
+              return res.json();
+            })
             .then(async res => {
-              alert("스크랩 목록에서 삭제 되었습니다.");
-              // ✅ 스크랩 수 감소
+              //  스크랩 수 감소
               await fetch(`${postApiUrl}/decreaseScrap`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ post_id: postID })
               });
+              alert("스크랩 목록에서 삭제 되었습니다.");
             })
-            .catch(console.error);
+            .catch((error) => {
+              console.error('There has been a problem with your fetch operation:', error);
+            });
         }
       })
-      .catch(console.error);
+      .catch((error) => {
+        console.error('There has been a problem with your fetch operation:', error);
+      });
     }
   }
 
