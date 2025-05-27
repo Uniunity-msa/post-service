@@ -21,6 +21,7 @@ async function connectRabbitMQ() {
   for (const queue of RECV_QUEUES) {
     await channel.assertQueue(queue, { durable: false });
   }
+  consumeMessages();
 
   return channel;
 }
