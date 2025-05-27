@@ -1,5 +1,8 @@
+import { baseUrls } from '/js/apiUrl.js';
+
 //글 에디터
 const Editor = toastui.Editor;
+
 const postApiUrl = baseUrls.post;
 const userApiUrl = baseUrls.user;
 var userInfo; //유저정보

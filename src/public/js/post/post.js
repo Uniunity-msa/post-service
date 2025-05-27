@@ -1,3 +1,5 @@
+import { baseUrls } from '/js/apiUrl.js';
+
 let userInfo; // 유저정보
 const postApiUrl = baseUrls.post;
 const userApiUrl = baseUrls.user;

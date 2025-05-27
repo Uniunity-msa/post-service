@@ -1,3 +1,6 @@
+import { baseUrls } from '/js/apiUrl.js';
+
+const postApiUrl = baseUrls.post;
 let userInfo; // 유저정보
 //로그인(로그아웃), 회원가입(마이페이지)버튼
 const loginStatusBtn = document.getElementById("loginStatusBtn");
