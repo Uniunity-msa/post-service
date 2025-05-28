@@ -224,7 +224,7 @@ const loadPostData = async () => {
 
   // 하트추가 기능
   function addHeart() {
-    if (userInfo.loginStatus === false) {
+    if (!userInfo || !userInfo.user_email) {
       alert("로그인 후에 기능을 사용할 수 있습니다.");
     }
     else {
@@ -290,7 +290,7 @@ const loadPostData = async () => {
 
   // 스크랩추가 기능
   function addScrap() {
-    if (userInfo.loginStatus === false) {
+    if (!userInfo || !userInfo.user_email) {
     alert("로그인 후에 기능을 사용할 수 있습니다.");
   }
   else {
@@ -501,7 +501,7 @@ const fetchComments = async () => {
 
 writeCommentBtn.addEventListener('click', function () {
   var commentContent = document.querySelector('.comment-form textarea').value;
-  if (userInfo.loginStatus === false) {
+  if (!userInfo || !userInfo.user_email) {
     alert("로그인 후에 게시글을 작성할 수 있습니다.");
   }
   else if(userInfo.university_id!=postInfo.university_id){
