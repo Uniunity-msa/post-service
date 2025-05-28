@@ -20,7 +20,7 @@ async function connectRabbitMQ() {
     await channel.assertQueue(queue, { durable: false });
   }
 
-    console.log('✅ universityRabbitMQ 큐 연결 완료');
+    console.log('✅ postRabbitMQ 큐 연결 완료');
     consumePostListRequest();
 
 }
@@ -124,5 +124,10 @@ async function consumePostListRequest(callback) {
   }
 }
 
+connectRabbitMQ();
 
-module.exports = { connectRabbitMQ };
+module.exports = {
+  connectRabbitMQ,
+  sendUniversityURL,
+  receiveUniversityData
+};
