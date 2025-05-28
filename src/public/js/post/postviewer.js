@@ -257,7 +257,7 @@ const loadPostData = async () => {
             })
             .catch(console.error);
         } else {
-          fetch(`${postApiUrl}/deleteHeart/${res.result.heart_id}`)
+          fetch(`${postApiUrl}/reactionApiUrl/${res.result.heart_id}`)
             .then((res) => res.json())
             .then(async res => {
               alert("하트 목록에서 삭제 되었습니다.");
@@ -326,7 +326,7 @@ const loadPostData = async () => {
         }
         // 사용자가 해당게시글에 스크랩를 눌렀을 경우 -> 스크랩 삭제
         else {
-          fetch(`${postApiUrl}/deleteScrap/${res.result.scrap_id}`)
+          fetch(`${reactionApiUrl}/deleteScrap/${res.result.scrap_id}`)
             .then((res) => {
               if (!res.ok) {
                 throw new Error('Network response was not ok');
