@@ -399,7 +399,7 @@ class PostStorage {
             });
         });
     }
-    //좋아요 증가
+    //좋아요 증가 감소
     static updatePostLikeCount(post_id, delta) {
     return new Promise((resolve, reject) => {
         pool.getConnection((err, connection) => {
@@ -414,13 +414,12 @@ class PostStorage {
         });
     });
     }
-  //스크랩 증가
+  //스크랩 증가 감소
 
     static updatePostScrapCount(post_id, delta) {
     return new Promise((resolve, reject) => {
         pool.getConnection((err, connection) => {
         if (err) return reject(err);
-
         const query = `UPDATE Post SET scrap_count = scrap_count + ? WHERE post_id = ?`;
         connection.query(query, [delta, post_id], (err) => {
             connection.release();
@@ -561,7 +560,42 @@ static getUserScrapList(post_ids) {
         });
     });
 }
+static getImagesInfo(university_id) {
+    console.log('postStorage.getImagesInfo 실행');
 
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+            if (err) {
+                console.error('MySQL 연결 오류: ', err);
+                return reject(err);
+            }
+
+            const query = `
+                SELECT p.post_id, i.image_url
+                FROM Post p
+                LEFT JOIN PostImage i ON p.post_id = i.post_id
+                WHERE p.university_id = ?
+            `;
+
+            connection.query(query, [university_id], (err, results) => {
+                connection.release();
+
+                if (err) {
+                    console.error('쿼리 실행 오류: ', err);
+                    return reject(err);
+                }
+
+                // 응답 형식에 맞게 데이터 정제
+                const post_info = results.map(row => ({
+                    post_id: row.post_id,
+                    img_url: row.image_url
+                }));
+
+                resolve({ post_info });
+            });
+        });
+    });
+}
 
 }
 

@@ -175,6 +175,7 @@ const postController = {
 },
   // 스크랩 수 증가
   increaseScrap: async (req, res) => {
+    console.log("🔥 /increaseScrap called", req.body); 
     const { post_id } = req.body;
     const response = await post.increaseScrap(post_id);
     return res.status(200).json(response);
@@ -231,6 +232,17 @@ const postController = {
     const post = new Post();
     const response = await post.getComments(req.params.post_id);
     return res.json(response);
+  },
+
+  // RabbitMQ로부터 받은 요청 처리
+  getPostListWithImage: async (university_id) => {
+    try {
+      const postList = await Post.getImagesInfo(university_id); // storage에 만든 함수 호출
+      return postList; // { post_info: [...] }
+    } catch (error) {
+      console.error("게시글+이미지 불러오기 실패:", error);
+      throw error;
+    }
   }
 
 };

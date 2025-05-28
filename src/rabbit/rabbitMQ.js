@@ -2,7 +2,8 @@ const amqp = require("amqplib");
 
 const RECV_QUEUES = [
   'RecvPostUniversityName',
-  'RecvPostUniversityID'
+  'RecvPostUniversityID',
+  'SendPostList'
   
 ];
 
@@ -65,7 +66,38 @@ async function receiveUniversityData(queueName) {
 
   throw new Error(`${queueName} 큐에서 메시지를 받지 못했습니다.`);
 }
+
+
+// 게시글 목록 요청 처리 (post-service에서 consume)
+async function consumePostListRequest(callback) {
+  if (!channel) await connectRabbitMQ();
+
+  const queueName = 'SendPostList'; // ✅ post-service가 소비하는 큐
+  await channel.assertQueue(queueName, { durable: false });
+
+  channel.consume(queueName, async (msg) => {
+    if (msg !== null) {
+      const { university_id } = JSON.parse(msg.content.toString());
+      console.log(`[post] 게시글 목록 요청 수신: university_id=${university_id}`);
+
+      const result = await callback(university_id); // postStorage.getPostList() 같은 함수
+
+      channel.sendToQueue(
+        msg.properties.replyTo,
+        Buffer.from(JSON.stringify(result)),
+        {
+          correlationId: msg.properties.correlationId || null,
+        }
+      );
+
+      channel.ack(msg);
+    }
+  });
+}
+
+
 module.exports = {
   sendUniversityURL,
-  receiveUniversityData
+  receiveUniversityData,
+  consumePostListRequest
 };
