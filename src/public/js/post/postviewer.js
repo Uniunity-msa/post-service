@@ -257,7 +257,7 @@ const loadPostData = async () => {
             })
             .catch(console.error);
         } else {
-          fetch(`${postApiUrl}/reactionApiUrl/${res.result.heart_id}`)
+          fetch(`${reactionApiUrl}/deleteHeart/${res.result.heart_id}`)
             .then((res) => res.json())
             .then(async res => {
               alert("하트 목록에서 삭제 되었습니다.");
