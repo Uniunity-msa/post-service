@@ -1,7 +1,6 @@
 const express = require("express");
 const path = require("path");
 const postRouter = require("./src/routes/postRoutes");
-const rabbitMQ = require("./src/rabbit/rabbitMQ");
 const app = express();
 const PORT = 3000;
 
@@ -46,7 +45,17 @@ app.get("/mypage/community/post/:category", (req, res) => {
 app.use("/", postRouter);
 
 
+//  RabbitMQ consumer 실행 추가
+const { consumePostListRequest } = require("./src/rabbit/rabbitMQ");
 
+(async () => {
+  try {
+    await consumePostListRequest();
+    console.log("✅ RabbitMQ 게시글 목록 소비 시작됨");
+  } catch (err) {
+    console.error("❌ RabbitMQ 게시글 목록 소비 실패:", err);
+  }
+})();
 
 // 서버 시작
 app.listen(PORT, () => {
