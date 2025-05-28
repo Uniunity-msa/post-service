@@ -3,6 +3,7 @@ const amqp = require("amqplib");
 const RECV_QUEUES = [
   'RecvPostUniversityName',
   'RecvPostUniversityID',
+  'RecvPostList',
   'SendPostList'
   
 ];
@@ -70,7 +71,7 @@ async function receiveUniversityData(queueName) {
 
 // 게시글 목록 요청 처리 (post-service에서 consume)
 async function consumePostListRequest(callback) {
-  try {
+    try {
     if (!channel) {
       console.log("[post] RabbitMQ 채널 없음 → 연결 시도");
       await connectRabbitMQ();
@@ -85,18 +86,17 @@ async function consumePostListRequest(callback) {
         console.log("[post] 메시지 수신됨");
 
         try {
-          console.log("[post] 🔍 raw message:", msg.content.toString());
           const { university_id } = JSON.parse(msg.content.toString());
-          console.log(`[post] ✅ 게시글 목록 요청 수신 → university_id=${university_id}`);
+          console.log(`[post]  게시글 목록 요청 수신 → university_id=${university_id}`);
 
-          const result = await callback(university_id);
-          console.log("[post] 📦 게시글 목록 조회 성공, 결과:", result);
+          // 컨트롤러 없이 직접 DB 접근
+          const result = await require('../models/postStorage').getPostListAll(university_id);
 
           const replyQueue = msg.properties.replyTo;
           const correlationId = msg.properties.correlationId || null;
 
           if (!replyQueue) {
-            console.error("[post] ❌ replyTo가 undefined입니다. 응답 보낼 큐가 없습니다.");
+            console.error("[post]  replyTo가 undefined입니다. 응답 보낼 큐가 없습니다.");
             return;
           }
 
@@ -105,12 +105,12 @@ async function consumePostListRequest(callback) {
             Buffer.from(JSON.stringify(result)),
             { correlationId }
           );
-          console.log(`[post] 📤 응답 전송 완료 → replyTo=${replyQueue}, correlationId=${correlationId}`);
+          console.log(`[post]  응답 전송 완료 → replyTo=${replyQueue}, correlationId=${correlationId}`);
 
           channel.ack(msg);
-          console.log("[post] ✅ 메시지 ack 완료");
+          console.log("[post]  메시지 ack 완료");
         } catch (err) {
-          console.error("[post] ❌ 메시지 처리 중 에러:", err);
+          console.error("[post]  메시지 처리 중 에러:", err);
         }
 
       } else {
@@ -118,7 +118,7 @@ async function consumePostListRequest(callback) {
       }
     });
   } catch (err) {
-    console.error("[post] ❌ consumePostListRequest 초기화 중 에러:", err);
+    console.error("[post]  consumePostListRequest 초기화 중 에러:", err);
   }
 }
 

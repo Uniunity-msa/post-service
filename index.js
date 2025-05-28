@@ -1,7 +1,7 @@
 const express = require("express");
 const path = require("path");
 const postRouter = require("./src/routes/postRoutes");
-
+const rabbitMQ = require("./src/rabbit/universityRabbitMQ");
 const app = express();
 const PORT = 3000;
 
