@@ -70,29 +70,56 @@ async function receiveUniversityData(queueName) {
 
 // 게시글 목록 요청 처리 (post-service에서 consume)
 async function consumePostListRequest(callback) {
-  if (!channel) await connectRabbitMQ();
-
-  const queueName = 'SendPostList'; // ✅ post-service가 소비하는 큐
-  await channel.assertQueue(queueName, { durable: false });
-
-  channel.consume(queueName, async (msg) => {
-    if (msg !== null) {
-      const { university_id } = JSON.parse(msg.content.toString());
-      console.log(`[post] 게시글 목록 요청 수신: university_id=${university_id}`);
-
-      const result = await callback(university_id); // postStorage.getPostList() 같은 함수
-
-      channel.sendToQueue(
-        msg.properties.replyTo,
-        Buffer.from(JSON.stringify(result)),
-        {
-          correlationId: msg.properties.correlationId || null,
-        }
-      );
-
-      channel.ack(msg);
+  try {
+    if (!channel) {
+      console.log("[post] RabbitMQ 채널 없음 → 연결 시도");
+      await connectRabbitMQ();
     }
-  });
+
+    const queueName = 'SendPostList';
+    await channel.assertQueue(queueName, { durable: false });
+    console.log(`[post] 큐 구독 시작: ${queueName}`);
+
+    channel.consume(queueName, async (msg) => {
+      if (msg !== null) {
+        console.log("[post] 메시지 수신됨");
+
+        try {
+          console.log("[post] 🔍 raw message:", msg.content.toString());
+          const { university_id } = JSON.parse(msg.content.toString());
+          console.log(`[post] ✅ 게시글 목록 요청 수신 → university_id=${university_id}`);
+
+          const result = await callback(university_id);
+          console.log("[post] 📦 게시글 목록 조회 성공, 결과:", result);
+
+          const replyQueue = msg.properties.replyTo;
+          const correlationId = msg.properties.correlationId || null;
+
+          if (!replyQueue) {
+            console.error("[post] ❌ replyTo가 undefined입니다. 응답 보낼 큐가 없습니다.");
+            return;
+          }
+
+          channel.sendToQueue(
+            replyQueue,
+            Buffer.from(JSON.stringify(result)),
+            { correlationId }
+          );
+          console.log(`[post] 📤 응답 전송 완료 → replyTo=${replyQueue}, correlationId=${correlationId}`);
+
+          channel.ack(msg);
+          console.log("[post] ✅ 메시지 ack 완료");
+        } catch (err) {
+          console.error("[post] ❌ 메시지 처리 중 에러:", err);
+        }
+
+      } else {
+        console.warn("[post] ❕ null 메시지 수신됨 → 무시함");
+      }
+    });
+  } catch (err) {
+    console.error("[post] ❌ consumePostListRequest 초기화 중 에러:", err);
+  }
 }
 
 
