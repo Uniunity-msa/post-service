@@ -376,7 +376,7 @@ const fetchComments = async () => {
   }
 
   try {
-    const response = await fetch(`${postApiUrl}/showComment/postviewer/${post_id}`);
+    const response = await fetch(`${reactionApiUrl}/showComment/postviewer/${post_id}`);
     const data = await response.json();
     const deleteIconImageUrl = 'https://img.icons8.com/?size=512&id=heybTkWFZ8KQ&format=png';
 
