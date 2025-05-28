@@ -90,7 +90,7 @@ async function consumePostListRequest(callback) {
           console.log(`[post]  게시글 목록 요청 수신 → university_id=${university_id}`);
 
           // 컨트롤러 없이 직접 DB 접근
-          const result = await require('../models/postStorage').getPostListAll(university_id);
+          const result = await require('../models/postStorage').getImagesInfo(university_id);
 
           const replyQueue = msg.properties.replyTo;
           const correlationId = msg.properties.correlationId || null;
