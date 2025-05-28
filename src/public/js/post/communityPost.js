@@ -1,16 +1,21 @@
 import { baseUrls } from '/js/apiUrl.js';
 
 const postApiUrl = baseUrls.post;
+const userApiUrl = baseUrls.user;
+
 let userInfo; // 유저정보
 //로그인(로그아웃), 회원가입(마이페이지)버튼
 const loginStatusBtn = document.getElementById("loginStatusBtn");
 const signUpBtn = document.getElementById("signUpBtn");
 const navBar = document.getElementById("navbar");
 
+const currentUrl = window.location.origin; 
+const redirectUri = `${currentUrl}/mypage`; // 로그인/로그아웃 완료 후 돌아올 주소
+
 // 유저 로그인 상태 확인 및 정보 로드
 const fetchLoginData = async () => {
     try {
-        const url = `${userServiceUrl}/auth/me`; 
+        const url = `${userApiUrl}/auth/me`; 
 
         const res = await fetch(url, {
             credentials: "include",
@@ -20,7 +25,7 @@ const fetchLoginData = async () => {
 
         if (!data.loginStatus) {
             alert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
-            window.location.href = "/login";
+            window.location.href = `${userApiUrl}/auth/login`;
             return;
         }
 
@@ -29,25 +34,45 @@ const fetchLoginData = async () => {
 
         // 유저 정보를 안전하게 받은 뒤 post 데이터 요청
         fetchPostData();
-
+        // 현재 경로가 /mypage가 아니면 리다이렉트
+        if (window.location.pathname !== '/mypage') {
+            window.location.href = redirectUri;
+         }
     } catch (error) {
         console.error("로그인 정보 확인 실패:", error);
         alert("서버 문제로 로그인 정보를 확인하지 못했습니다.");
-        window.location.href = "/login";
+        window.location.href = `${userApiUrl}/auth/login`;
     }
 };
 
 const setLoginHeader = (res) => {
     navBar.setAttribute("href", `${postApiUrl}`);
     if (res.loginStatus) {
-        loginStatusBtn.setAttribute("href", `${userServiceUrl}/logout`);
+        //loginStatusBtn.setAttribute("href", `${userApiUrl}/auth/logout`);
         loginStatusBtn.innerText = "로그아웃"
-        signUpBtn.setAttribute("href", `${startServiceUrl}/council/${res.university_url}`);
+        loginStatusBtn.onclick = async (e) => {
+            e.preventDefault();
+            try {
+                const response = await fetch(`${userServiceUrl}/auth/logout`, {
+                    credentials: "include",
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    window.location.href = redirectUri;
+                } else {
+                    alert("로그아웃 실패");
+                }
+            } catch (err) {
+                console.error("로그아웃 요청 실패:", err);
+            }
+        };
+        signUpBtn.setAttribute("href", `${postApiUrl}/council/${res.university_url}`);
         signUpBtn.innerText = "나의학교"
     }
     else {
         alert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
-        window.location.href = "/login"; // 리다이렉션 처리
+        window.location.href = `${userApiUrl}/auth/login`; // 리다이렉션 처리
     }
 
 }
@@ -208,8 +233,7 @@ function createCard(data) {
 
 // 로드 후 loadData()실행
 window.addEventListener('DOMContentLoaded', async function () {
-    // await fetchLoginData();
-    console.log("js 이벤트리스너 함수 실행");
+    await fetchLoginData();
     await fetchPostData();
 
 });
