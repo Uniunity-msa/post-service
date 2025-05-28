@@ -11,16 +11,31 @@ const RECV_QUEUES = [
 let channel;
 
 async function connectRabbitMQ() {
-  const rabbitUrl = process.env.RABBIT || 'amqp://localhost'; // env 변수 사용, 없으면 localhost 기본
-  const connection = await amqp.connect(rabbitUrl);
-  channel = await connection.createChannel();
+  const rabbitUrl = process.env.RABBIT || 'amqp://localhost';
 
-  // 모든 RECV 큐 선언
-  for (const queue of RECV_QUEUES) {
-    await channel.assertQueue(queue, { durable: false });
+  for (let i = 0; i < retryCount; i++) {
+    try {
+      const connection = await amqp.connect(rabbitUrl);
+      channel = await connection.createChannel();
+
+      for (const queue of RECV_QUEUES) {
+        await channel.assertQueue(queue, { durable: false });
+      }
+
+      console.log("✅ RabbitMQ 연결 성공");
+      return channel;
+    } catch (err) {
+      console.error(`❌ RabbitMQ 연결 실패 (${i + 1}/${retryCount})`);
+      console.error(err);
+
+      if (i < retryCount - 1) {
+        await new Promise(resolve => setTimeout(resolve, delay));
+      } else {
+        console.error("💥 RabbitMQ 재시도 모두 실패");
+        throw err;
+      }
+    }
   }
-
-  return channel;
 }
 
 // university_url을 전송
