@@ -1,12 +1,6 @@
 const amqp = require("amqplib");
 
-const RECV_QUEUES = [
-  'RecvPostUniversityName',
-  'RecvPostUniversityID',
-  'RecvPostList',
-  'SendPostList'
-  
-];
+
 
 let channel;
 
@@ -14,13 +8,21 @@ async function connectRabbitMQ() {
   const rabbitUrl = process.env.RABBIT || 'amqp://localhost'; // env 변수 사용, 없으면 localhost 기본
   const connection = await amqp.connect(rabbitUrl);
   channel = await connection.createChannel();
+  const RECV_QUEUES = [
+    'RecvPostUniversityName',
+    'RecvPostUniversityID',
+    'RecvPostList',
+    'SendPostList'
+  ];
 
   // 모든 RECV 큐 선언
   for (const queue of RECV_QUEUES) {
     await channel.assertQueue(queue, { durable: false });
   }
 
-  return channel;
+    console.log('✅ universityRabbitMQ 큐 연결 완료');
+    consumePostListRequest();
+
 }
 
 // university_url을 전송
@@ -123,8 +125,4 @@ async function consumePostListRequest(callback) {
 }
 
 
-module.exports = {
-  sendUniversityURL,
-  receiveUniversityData,
-  consumePostListRequest
-};
+module.exports = { connectRabbitMQ };
