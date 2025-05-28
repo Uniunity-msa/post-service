@@ -254,12 +254,6 @@ const loadPostData = async () => {
             .then((res) => res.json())
             .then(async res => {
               alert("하트 목록에 추가 되었습니다.");
-              //  좋아요 수 증가
-              await fetch(`${postApiUrl}/increaseHeart`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ post_id: postID })
-              });
             })
             .catch(console.error);
         } else {
@@ -267,12 +261,6 @@ const loadPostData = async () => {
             .then((res) => res.json())
             .then(async res => {
               alert("하트 목록에서 삭제 되었습니다.");
-              //  좋아요 수 감소
-              await fetch(`${postApiUrl}/decreaseHeart`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ post_id: postID })
-              });
             })
             .catch(console.error);
         }
@@ -330,12 +318,6 @@ const loadPostData = async () => {
               return res.json();
             })
             .then(async res => {
-              // 스크랩 수 증가
-              await fetch(`${postApiUrl}/increaseScrap`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ post_id: postID })
-              });
               alert("스크랩 목록에 추가 되었습니다.");
             })
             .catch((error) => {
@@ -352,12 +334,6 @@ const loadPostData = async () => {
               return res.json();
             })
             .then(async res => {
-              //  스크랩 수 감소
-              await fetch(`${postApiUrl}/decreaseScrap`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ post_id: postID })
-              });
               alert("스크랩 목록에서 삭제 되었습니다.");
             })
             .catch((error) => {
