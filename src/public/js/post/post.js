@@ -3,7 +3,8 @@ import { baseUrls } from '/js/apiUrl.js';
 let userInfo; // 유저정보
 const postApiUrl = baseUrls.post;
 const userApiUrl = baseUrls.user;
-
+const reactionApiUrl = baseUrls.reaction;
+const startApiUrl = baseUrls.start;
 // 작성자 회원 정보 불러오기
 const loadloginData = async () => {
   const res = await fetch(`${userApiUrl}/auth/me`, {
@@ -35,16 +36,16 @@ const setLoginHeader = (res) => {
   if (res.user_email) {
     loginStatusBtn.setAttribute("href", `${postApiUrl}/logout`);
     loginStatusBtn.innerText = "로그아웃"
-    signUpBtn.setAttribute("href", `${postApiUrl}/mypage`);
+    signUpBtn.setAttribute("href", `${reactionApiUrl}/mypage`);
     signUpBtn.innerText = "마이페이지"
-    backBtn.setAttribute("href", `${postApiUrl}/council/${university_url}`);
+    backBtn.setAttribute("href", `${startApiUrl}/council/${university_url}`);
   }
   else {
-    loginStatusBtn.setAttribute("href", `${postApiUrl}/login`);
+    loginStatusBtn.setAttribute("href", `${userApiUrl}/login`);
     loginStatusBtn.innerText = "로그인"
     signUpBtn.setAttribute("href", `${postApiUrl}/signup/agreement`);
     signUpBtn.innerText = "회원가입"
-    backBtn.setAttribute("href", `${postApiUrl}/council/${university_url}`);
+    backBtn.setAttribute("href", `${startApiUrl}/council/${university_url}`);
   }
 
 }
@@ -408,7 +409,7 @@ window.addEventListener('DOMContentLoaded', async function () {
   if (userInfo) {
     setLoginHeader(userInfo); // 로그인 상태에 따라 버튼 업데이트
   }
-  
+
   fetchPosts();
 });
 
