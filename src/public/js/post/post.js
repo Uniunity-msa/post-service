@@ -34,18 +34,18 @@ const universityName = document.getElementById("university_name");
 const setLoginHeader = (res) => {
   navBar.setAttribute("href", `${postApiUrl}/showPostListAll/${university_url}`);
   if (res.user_email) {
-    loginStatusBtn.setAttribute("href", `${postApiUrl}/logout`);
-    loginStatusBtn.innerText = "로그아웃"
+    // loginStatusBtn.setAttribute("href", `${postApiUrl}/logout`);
+    // loginStatusBtn.innerText = "로그아웃"
     signUpBtn.setAttribute("href", `${reactionApiUrl}/mypage`);
     signUpBtn.innerText = "마이페이지"
-    backBtn.setAttribute("href", `${startApiUrl}/council/${university_url}`);
+    // backBtn.setAttribute("href", `${startApiUrl}/council/${university_url}`);
   }
   else {
-    loginStatusBtn.setAttribute("href", `${userApiUrl}/login`);
-    loginStatusBtn.innerText = "로그인"
-    signUpBtn.setAttribute("href", `${postApiUrl}/signup/agreement`);
+    // loginStatusBtn.setAttribute("href", `${userApiUrl}/login`);
+    // loginStatusBtn.innerText = "로그인"
+    signUpBtn.setAttribute("href", `${userApiUrl}/signup/agreement`);
     signUpBtn.innerText = "회원가입"
-    backBtn.setAttribute("href", `${startApiUrl}/council/${university_url}`);
+    // backBtn.setAttribute("href", `${startApiUrl}/council/${university_url}`);
   }
 
 }
