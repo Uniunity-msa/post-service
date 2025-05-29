@@ -34,16 +34,16 @@ const universityName = document.getElementById("university_name");
 const setLoginHeader = (res) => {
   navBar.setAttribute("href", `${postApiUrl}/showPostListAll/${university_url}`);
   if (res.user_email) {
-    // loginStatusBtn.setAttribute("href", `${postApiUrl}/logout`);
-    // loginStatusBtn.innerText = "로그아웃"
+    loginStatusBtn.setAttribute("href", "#");
+    loginStatusBtn.innerText = "로그아웃"
     signUpBtn.setAttribute("href", `${reactionApiUrl}/mypage`);
     signUpBtn.innerText = "마이페이지"
     // backBtn.setAttribute("href", `${startApiUrl}/council/${university_url}`);
   }
   else {
-    // loginStatusBtn.setAttribute("href", `${userApiUrl}/login`);
-    // loginStatusBtn.innerText = "로그인"
-    signUpBtn.setAttribute("href", `${userApiUrl}/signup/agreement`);
+    loginStatusBtn.setAttribute("href", `${userApiUrl}/login`);
+    loginStatusBtn.innerText = "로그인"
+    signUpBtn.setAttribute("href", `${userApiUrl}/user/signup/:marketing`);
     signUpBtn.innerText = "회원가입"
     // backBtn.setAttribute("href", `${startApiUrl}/council/${university_url}`);
   }
@@ -627,3 +627,34 @@ const increaseViewCount = async (post_id) => {
   }
 }
 
+// 로그아웃 버튼 이벤트 리스너 추가
+document.addEventListener('DOMContentLoaded', () => {
+  const loginStatusBtn = document.getElementById("loginStatusBtn");
+
+  if (loginStatusBtn) {
+    loginStatusBtn.addEventListener("click", async (e) => {
+      // 현재 버튼이 "로그아웃"일 때만 로그아웃 시도
+      if (loginStatusBtn.innerText === "로그아웃") {
+        e.preventDefault(); // a 태그 이동 막기
+
+        try {
+          const res = await fetch(`${userApiUrl}/auth/logout`, {
+            method: "POST",
+            credentials: "include"
+          });
+
+          if (res.ok) {
+            alert("로그아웃되었습니다.");
+            window.location.href = "/"; // 로그아웃 후 홈으로 이동
+          } else {
+            const data = await res.json();
+            alert(data.message || "로그아웃에 실패했습니다.");
+          }
+        } catch (err) {
+          console.error("로그아웃 요청 중 오류 발생:", err);
+          alert("서버 오류로 로그아웃에 실패했습니다.");
+        }
+      }
+    });
+  }
+});
