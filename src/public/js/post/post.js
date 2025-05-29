@@ -629,13 +629,15 @@ const increaseViewCount = async (post_id) => {
 
 // 로그아웃 버튼 이벤트 리스너 추가
 document.addEventListener('DOMContentLoaded', () => {
-  const loginStatusBtn = document.getElementById("loginStatusBtn");
+   const loginStatusBtn = document.getElementById("loginStatusBtn");
 
   if (loginStatusBtn) {
     loginStatusBtn.addEventListener("click", async (e) => {
-      // 현재 버튼이 "로그아웃"일 때만 로그아웃 시도
-      if (loginStatusBtn.innerText === "로그아웃") {
-        e.preventDefault(); // a 태그 이동 막기
+      const text = loginStatusBtn.innerText.trim(); // 공백 제거한 텍스트 확인
+      console.log("🔍 현재 버튼 텍스트:", text);
+
+      if (text === "로그아웃") {
+        e.preventDefault(); // 로그아웃일 때만 이동 막기
 
         try {
           const res = await fetch(`${userApiUrl}/auth/logout`, {
@@ -645,7 +647,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
           if (res.ok) {
             alert("로그아웃되었습니다.");
-            window.location.href = "/"; // 로그아웃 후 홈으로 이동
+            window.location.href = "/"; // 홈으로 리다이렉션
           } else {
             const data = await res.json();
             alert(data.message || "로그아웃에 실패했습니다.");
@@ -655,6 +657,7 @@ document.addEventListener('DOMContentLoaded', () => {
           alert("서버 오류로 로그아웃에 실패했습니다.");
         }
       }
+      // 로그인일 땐 기본 링크 이동 허용하므로 e.preventDefault() 없음
     });
   }
 });
