@@ -401,9 +401,14 @@ document.addEventListener('keydown', function (event) {
 }, true);
 
 // 페이지 로드 후 실행
-window.addEventListener('DOMContentLoaded', function () {
+window.addEventListener('DOMContentLoaded', async function () {
   getUniversityName();
-  loadloginData();
+  await loadloginData(); // 로그인 정보 다 받아올 때까지 기다림
+
+  if (userInfo) {
+    setLoginHeader(userInfo); // 로그인 상태에 따라 버튼 업데이트
+  }
+  
   fetchPosts();
 });
 
