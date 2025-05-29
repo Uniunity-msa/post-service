@@ -23,6 +23,8 @@ const loadloginData = async () => {
   const data = await res.json();
   console.log("✅  받아온 유저 정보:", data); // 실제 유저 정보 로그
   userInfo = data; 
+  
+  setSelectCategory(userInfo.user_type);
 };
 
 // 파일명을 생성하는 함수
@@ -111,8 +113,8 @@ const setSelectCategory = (user_type) => {
   defaultOption.text = "글 카테고리를 선택해주세요";
   defaultOption.selected = true;
   selectElement.appendChild(defaultOption);
-
-  if (user_type === "학생") {
+  console.log("🎯 현재 user_type:", user_type);
+  if (user_type === "student") {
     const options = ["제휴 추천", "잡담"];
     const values = ["제휴 추천", "잡담"];
     for (let i = 0; i < options.length; i++) {
@@ -121,7 +123,7 @@ const setSelectCategory = (user_type) => {
       option.text = options[i];
       selectElement.appendChild(option);
     }
-  } else if (user_type === "학생회") {
+  } else if (user_type === "council") {
     let options;
     let values;
     if(getUniversityUrl()=='modify'){
