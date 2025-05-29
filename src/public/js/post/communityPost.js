@@ -116,7 +116,7 @@ const fetchPostData = async () => {
     const url = `${postApiUrl}/mypage/community/post/${category}`;
 
     console.log("api 요청 주소:", url);
-console.log("요청 바디:", req);
+    console.log("요청 바디:", req);
 
     await fetch(url, {
         method: "POST",
@@ -142,8 +142,8 @@ console.log("요청 바디:", req);
             console.error("Error: ", error);
             alert("서버의 문제로 게시글 관리 접근에 실패했습니다. 다시 시도해주세요.");
         })
- 
 }
+
 function truncateText(elementId, maxLength, data) {
     const element = document.getElementById(elementId);
     console.log(element)
