@@ -227,7 +227,12 @@ const loadPostData = async () => {
     if (!userInfo || !userInfo.user_email) {
       alert("로그인 후에 기능을 사용할 수 있습니다.");
     }
-    else {
+
+    // 자기 글이면 좋아요 불가
+    if (userInfo.user_email === postWriterInfo.user_email) {
+      alert("자신이 작성한 글에는 좋아요를 누를 수 없습니다.");
+      return;
+    }
       //사용자가 이미 해당 게시글에 하트를 눌렀는지 확인
       const postID = getPostID();
       const req = {
@@ -266,7 +271,7 @@ const loadPostData = async () => {
         }
       })
       .catch(console.error);
-    }
+    
   }
 
   likeImg.addEventListener('click', function () {
@@ -281,7 +286,12 @@ const loadPostData = async () => {
     if (!userInfo || !userInfo.user_email) {
     alert("로그인 후에 기능을 사용할 수 있습니다.");
   }
-  else {
+    // 자기 글이면 스크랩 불가
+    if (userInfo.user_email === postWriterInfo.user_email) {
+      alert("자신이 작성한 글에는 스크랩을 할 수 없습니다.");
+      return;
+    }
+
     //사용자가 이미 해당 게시글에 스크랩를 눌렀는지 확인
     const postID = getPostID();
     const req = {
@@ -344,7 +354,7 @@ const loadPostData = async () => {
       .catch((error) => {
         console.error('There has been a problem with your fetch operation:', error);
       });
-    }
+    
   }
 
   scrapImg.addEventListener('click', function () {
