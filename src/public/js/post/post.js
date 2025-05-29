@@ -34,7 +34,7 @@ const universityName = document.getElementById("university_name");
 const setLoginHeader = (res) => {
   navBar.setAttribute("href", `${postApiUrl}/showPostListAll/${university_url}`);
   if (res.user_email) {
-    loginStatusBtn.setAttribute("href", "#");
+    loginStatusBtn.setAttribute("href");
     loginStatusBtn.innerText = "로그아웃"
     signUpBtn.setAttribute("href", `${reactionApiUrl}/mypage`);
     signUpBtn.innerText = "마이페이지"
