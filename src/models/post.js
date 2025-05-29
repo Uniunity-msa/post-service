@@ -61,6 +61,9 @@ try {
   const response = await new Promise((resolve, reject) => {
     this.channel.consume(tempQueue, async (msg) => {
       if (msg.properties.correlationId === correlationId) {
+        //테스트용
+        console.log('[post-service] CommentRequestQueue 메시지 수신:', msg.content.toString());
+           
         const postIds = JSON.parse(msg.content.toString());
         const data = await PostStorage.getMyCommentPost(postIds);
         resolve(data);
@@ -109,6 +112,9 @@ async getUserHeartList(user_email) {
     const response = await new Promise((resolve, reject) => {
       this.channel.consume(tempQueue, async (msg) => {
         if (msg.properties.correlationId === correlationId) {
+          //테스트용
+        console.log('[post-service] HeartRequestQueue 메시지 수신:', msg.content.toString());
+         
           const postIds = JSON.parse(msg.content.toString());
           const data = await PostStorage.getUserHeartList(postIds);
           resolve(data);
@@ -158,6 +164,9 @@ async getUserScrapList(user_email) {
     const response = await new Promise((resolve, reject) => {
       this.channel.consume(tempQueue, async (msg) => {
         if (msg.properties.correlationId === correlationId) {
+          //테스트용
+        console.log('[post-service] ScrapRequestQueue 메시지 수신:', msg.content.toString());
+         
           const postIds = JSON.parse(msg.content.toString());
           const data = await PostStorage.getUserScrapList(postIds);
           resolve(data);
