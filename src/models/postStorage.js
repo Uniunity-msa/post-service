@@ -33,7 +33,7 @@ class PostStorage {
                 }
                 // 현재 시간을 YYYY-MM-DD HH:MM:SS 형식으로 포맷팅
                 const formattedDateTime = getCurrentDateTime();
-                const query = 'INSERT INTO Post(user_email, user_nickname, university_id, post_title, post_content, category, post_date) VALUES (?,?,?,?,?,?);';
+                const query = 'INSERT INTO Post(user_email, user_nickname, university_id, post_title, post_content, category, post_date) VALUES (?,?,?,?,?,?,?);';
                 pool.query(query,
                     [
                         postInfo.user_email,
