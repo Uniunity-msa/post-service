@@ -65,7 +65,7 @@ async function showDeleteButtonIfNeeded() {
 } else {
   modifyPost.style.display = 'none';
   deletePost.style.display = 'none';
-}
+  }
 }
 
 
@@ -419,7 +419,7 @@ const fetchComments = async () => {
       deleteIconElement.width = 24;
       deleteIconElement.height = 24;
 
-      if (userInfo.user_email === comment.user_email) {
+      if (userInfo && userInfo.user_email === comment.user_email) {
         deleteIconElement.src = deleteIconImageUrl;
         deleteIconElement.alt = 'Delete Comment';
         deleteIconElement.id = comment.comment_id;
@@ -515,7 +515,7 @@ writeCommentBtn.addEventListener('click', function () {
             fetchComments();
             document.querySelector('.comment-form textarea').value = "";
             displayCommentNum(); // 댓글 수 다시 불러오기 추가
-            
+          
           
 
           } else {
@@ -633,6 +633,7 @@ function handleModifyClick() {
     
   }
 }
+
 function setModifyPostId(post_id){
   localStorage.setItem('post_id',post_id);
   window.location.href = '/postform/modify'; // 수정 페이지로 리다이렉션
