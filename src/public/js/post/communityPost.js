@@ -2,7 +2,7 @@ import { baseUrls } from '/js/apiUrl.js';
 
 const postApiUrl = baseUrls.post;
 const userApiUrl = baseUrls.user;
-
+const startApiUrl = baseUrls.start;
 let userInfo; // 유저정보
 //로그인(로그아웃), 회원가입(마이페이지)버튼
 const loginStatusBtn = document.getElementById("loginStatusBtn");
@@ -23,6 +23,9 @@ const fetchLoginData = async () => {
 
         const data = await res.json();
 
+        //테스트용
+        console.log("[로그인 체크] 응답 데이터:", data);
+
         if (!data.loginStatus) {
             alert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
             window.location.href = `${userApiUrl}/auth/login`;
@@ -40,27 +43,39 @@ const fetchLoginData = async () => {
          }
     } catch (error) {
         console.error("로그인 정보 확인 실패:", error);
+
         alert("서버 문제로 로그인 정보를 확인하지 못했습니다.");
         window.location.href = `${userApiUrl}/auth/login`;
     }
 };
 
 const setLoginHeader = (res) => {
-    navBar.setAttribute("href", `${postApiUrl}`);
+    navBar.setAttribute("href", `${startApiUrl}`);
     if (res.loginStatus) {
         //loginStatusBtn.setAttribute("href", `${userApiUrl}/auth/logout`);
         loginStatusBtn.innerText = "로그아웃"
         loginStatusBtn.onclick = async (e) => {
             e.preventDefault();
             try {
+
+                //테스트용
+                console.log("[로그아웃] 요청 시작");
+
                 const response = await fetch(`${userServiceUrl}/auth/logout`, {
                     credentials: "include",
                 });
 
                 if (response.ok) {
                     const data = await response.json();
+
+                    //테스트용
+                    console.log("[로그아웃] 성공:", data);
+                    
                     window.location.href = redirectUri;
                 } else {
+                    //테스트용
+                    console.warn("[로그아웃] 실패 상태 코드:", response.status);
+
                     alert("로그아웃 실패");
                 }
             } catch (err) {
