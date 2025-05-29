@@ -228,9 +228,18 @@ async getUserScrapList(user_email) {
 
   async doDeletePost(postId, userEmail) {
     try {
-      return await PostStorage.goDeletePost(postId, userEmail);
+      const result = await PostStorage.goDeletePost(post_id, user_email);
+
+      // 게시글 삭제에 성공했을 때만 댓글 삭제 요청
+      if (result.result === true) {
+        const commentDelete = await ReactionClient.deleteAllCommentsByPostId(post_id);
+        console.log("✅ 댓글 삭제 완료:", commentDelete);
+      }
+
+      return result;
     } catch (err) {
-      return { err };
+      console.error("❌ 게시글 삭제 또는 댓글 삭제 실패:", err);
+      return { result: false, error: err.message || err };
     }
   }
 
@@ -333,6 +342,7 @@ async getComments(post_id) {
     return { success: false, msg: err.message || err };
   }
 }
+
 //start-service 요청 처리: postId, imgUrl 보내기
   async getImagesInfo(university_id) {
     try{

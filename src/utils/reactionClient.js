@@ -10,7 +10,18 @@ const ReactionClient = {
       console.error('❌ 댓글 조회 실패:', err.message || err);
       throw err;
     }
+  },
+  async deleteAllCommentsByPostId(post_id) {
+    try {
+      const response = await axios.delete(`${REACTION_SERVICE_URL}/deleteAllComments/${post_id}`);
+      return response.data;
+    } catch (err) {
+      console.error('❌ 댓글 삭제 실패:', err.message || err);
+      
+    }
   }
 };
+
+
 
 module.exports = ReactionClient;
