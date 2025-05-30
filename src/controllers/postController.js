@@ -204,20 +204,10 @@ const postController = {
 
   // 마이페이지 → 내가 작성한 글 / 댓글 단 글 / 좋아요 / 스크랩 글 조회
   myCommunityPostData: async (req, res) => {
-    console.log("컨트롤러 안에 들어옴, try 전");
-    console.log("req");
-    console.log(req);
-    console.log("req.params.category");
-    console.log(req.params.category);
     try {
-      console.log("[Post_postController] myCommunityPostData 컨트롤러 호출");
       // 쿠키를 통해 사용자 정보 가져오기
-      // const user = await fetchUserInfoFromUserService(req.headers.cookie);
-      // const user_email = user.user_email;
-      // 테스트용 하드코딩
-      const user_email = "asdf1234@gmail.com";
-      console.log("user_email");
-      console.log(user_email);
+      const user = await fetchUserInfoFromUserService(req.headers.cookie);
+      const user_email = user.user_email;
       let response;
       if (req.params.category === '1') {
         response = await postWithRabbitMQ.myCommunityPost(user_email);
@@ -230,8 +220,6 @@ const postController = {
       } else {
         return res.status(400).json({ error: 'Invalid category' });
       }
-      console.log("response");
-      console.log(response);
       return res.json(response);
     } catch (err) {
       console.error('myCommunityPostData error:', err);
