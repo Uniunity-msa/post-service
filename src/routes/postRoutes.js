@@ -38,8 +38,8 @@ router.patch("/increaseHeart", postController.increaseHeart);
 router.patch("/decreaseHeart", postController.decreaseHeart);
 router.patch("/increaseScrap", postController.increaseScrap);
 router.patch("/decreaseScrap", postController.decreaseScrap);
-router.post("/increaseComment", postController.increaseComment);
-router.post("/decreaseComment", postController.decreaseComment);
+router.patch("/increaseComment", postController.increaseComment);
+router.patch("/decreaseComment", postController.decreaseComment);
 
 
 // 사용자 반응 게시글 불러오기
