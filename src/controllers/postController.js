@@ -210,7 +210,7 @@ const postController = {
       // const user = await fetchUserInfoFromUserService(req.headers.cookie);
       // const user_email = user.user_email;
       // 테스트용 하드코딩
-      user_email = "student@sungshin.ac.kr";
+      const user_email = "student@sungshin.ac.kr";
       console.log("user_email");
       console.log(user_email);
       let response;
