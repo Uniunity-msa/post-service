@@ -249,6 +249,6 @@ function createCard(data) {
 // 로드 후 loadData()실행
 window.addEventListener('DOMContentLoaded', async function () {
     await fetchLoginData();
-    await fetchPostData();
+    //await fetchPostData();
 
 });
