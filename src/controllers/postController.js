@@ -189,16 +189,18 @@ const postController = {
   // 댓글 수 증가
   increaseComment: async (req, res) => {
     const { post_id } = req.body;
-    const result = await PostStorage.updatePostCommentCount(post_id);
-    return res.json(result);
-  },
-  // 댓글 수 감소
-  decreaseComment: async (req, res) => {
-    const { post_id } = req.body;
-    const result = await PostStorage.reducePostCommentCount(post_id);
+    const post = new Post();
+    const result = await post.increaseCommentCount(post_id);
     return res.json(result);
   },
 
+  // 댓글 수 감소
+  decreaseComment: async (req, res) => {
+    const { post_id } = req.body;
+    const post = new Post();
+    const result = await post.decreaseCommentCount(post_id);
+    return res.json(result);
+  },
 
   // 마이페이지 → 내가 작성한 글 / 댓글 단 글 / 좋아요 / 스크랩 글 조회
   myCommunityPostData: async (req, res) => {
