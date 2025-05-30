@@ -362,6 +362,24 @@ async getComments(post_id) {
       return {success:false ,msg:err};
     }
   }
+  
+//댓글 증가감소
+
+   async increaseCommentCount(post_id) {
+    try {
+      return await PostStorage.updatePostCommentCount(post_id);
+    } catch (err) {
+      return { result: false, msg: err.message || err };
+    }
+  }
+
+  async decreaseCommentCount(post_id) {
+    try {
+      return await PostStorage.reducePostCommentCount(post_id);
+    } catch (err) {
+      return { result: false, msg: err.message || err };
+    }
+  }
 }
         
 
