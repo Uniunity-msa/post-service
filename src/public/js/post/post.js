@@ -21,6 +21,7 @@ const loadloginData = async () => {
   const data = await res.json();
   console.log("✅ 받아온 유저 정보:", data); // 실제 유저 정보 로그
   userInfo = data; 
+  return data;
 };
 
 
@@ -34,8 +35,8 @@ const universityName = document.getElementById("university_name");
 const setLoginHeader = (res) => {
   navBar.setAttribute("href", `${postApiUrl}/showPostListAll/${university_url}`);
   if (res.user_email) {
-    loginStatusBtn.setAttribute("href");
-    loginStatusBtn.innerText = "로그아웃"
+    loginStatusBtn.removeAttribute("href"); 
+    loginStatusBtn.innerText = "로그아웃";
     signUpBtn.setAttribute("href", `${reactionApiUrl}/mypage`);
     signUpBtn.innerText = "마이페이지"
     // backBtn.setAttribute("href", `${startApiUrl}/council/${university_url}`);
@@ -404,11 +405,10 @@ document.addEventListener('keydown', function (event) {
 // 페이지 로드 후 실행
 window.addEventListener('DOMContentLoaded', async function () {
   getUniversityName();
-  await loadloginData(); // 로그인 정보 다 받아올 때까지 기다림
+  
+  const loginUser = await loadloginData(); 
+  setLoginHeader(loginUser);
 
-  if (userInfo) {
-    setLoginHeader(userInfo); // 로그인 상태에 따라 버튼 업데이트
-  }
 
   fetchPosts();
 });
