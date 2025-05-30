@@ -47,7 +47,7 @@ const setLoginHeader = (res) => {
   }
   else {
     console.log("🛑 로그인 상태 아님 또는 사용자 정보 없음");
-    loginStatusBtn.setAttribute("href", `${userApiUrl}/login`);
+    loginStatusBtn.setAttribute("href", `${userApiUrl}/auth/login`);
     loginStatusBtn.innerText = "로그인"
     signUpBtn.setAttribute("href", `${userApiUrl}/user/agreement`);
     signUpBtn.innerText = "회원가입"
