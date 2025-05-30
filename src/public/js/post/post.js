@@ -38,7 +38,7 @@ const universityName = document.getElementById("university_name");
 const setLoginHeader = (res) => {
     console.log("🔍 setLoginHeader 실행됨, 전달받은 값:", res);
   navBar.setAttribute("href", `${postApiUrl}/showPostListAll/${university_url}`);
-  if (res.user_email) {
+  if (res && res.user_email) {
     loginStatusBtn.removeAttribute("href"); 
     loginStatusBtn.innerText = "로그아웃";
     signUpBtn.setAttribute("href", `${reactionApiUrl}/mypage`);
