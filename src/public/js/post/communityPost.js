@@ -93,13 +93,11 @@ const setLoginHeader = (res) => {
 }
 
 const fetchPostData = async () => {
-
     let frontend_url = window.location.href;
     let category = frontend_url.split('/')[6];
-
-    let req = {
-        user_email: userInfo.user_email // 사용자 이메일 받아오도록 수정 //
-    }
+    // let req = {
+    //     user_email: userInfo.user_email // 사용자 이메일 받아오도록 수정 //
+    // }
 
     const commnunityPostTitle = document.getElementById("community_post_title")
     if (category === '1') {
