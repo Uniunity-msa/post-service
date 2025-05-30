@@ -26,3 +26,4 @@ build/
 
 # 기타
 coverage/
+*.swp

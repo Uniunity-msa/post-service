@@ -43,8 +43,8 @@ router.post("/decreaseComment", postController.decreaseComment);
 
 
 // 사용자 반응 게시글 불러오기
-router.get("/mypage/community/post/:category", postController.myCommunityPostData);
 router.post("/mypage/community/post/:category", postController.myCommunityPostData);
+
 //댓글
 router.get("/comments/:post_id", postController.getComments);
 
