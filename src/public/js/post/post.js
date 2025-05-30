@@ -653,7 +653,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
           if (res.ok) {
             alert("로그아웃되었습니다.");
-            window.location.href = "/"; // 홈으로 리다이렉션
+            // 현재 URL에서 university_url 추출 후 리다이렉트
+            const currentUrl = window.location.href;
+            const universityUrl = currentUrl.split("/").pop();
+
+            window.location.href = `${postApiUrl}/showPostListAll/${universityUrl}`;
           } else {
             const data = await res.json();
             alert(data.message || "로그아웃에 실패했습니다.");
