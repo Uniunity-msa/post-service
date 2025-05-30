@@ -500,7 +500,7 @@ writeCommentBtn.addEventListener('click', function () {
     }
     else if (commentContent.trim().length > 0) {
       // 댓글 등록 API 호출
-      fetch(`${postApiUrl}/uploadComment/postviewer`, {
+      fetch(`${reactionApiUrl}/uploadComment/postviewer`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
