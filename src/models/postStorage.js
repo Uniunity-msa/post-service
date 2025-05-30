@@ -251,85 +251,77 @@ class PostStorage {
         })
     }
     //내가 작성한 게시글 삭제하기
-    static goDeletePost(post_id, user_email) {
-        return new Promise(async (resolve, reject) => {
-            pool.getConnection((err, connection) => {
+static goDeletePost(post_id, user_email) {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+            if (err) {
+                console.error('MySQL 연결 오류: ', err);
+                return reject({
+                    result: false,
+                    status: 500,
+                    err: `${err}`
+                });
+            }
+
+            const checkQuery = 'SELECT * FROM Post WHERE post_id = ?';
+
+            connection.query(checkQuery, [post_id], (err, result) => {
                 if (err) {
-                    console.error('MySQL 연결 오류: ', err);
-                    reject(err);
+                    connection.release();
+                    return reject({
+                        result: false,
+                        status: 500,
+                        err: `${err}`
+                    });
                 }
 
-                const deleteCommentsQuery = 'DELETE FROM Comment WHERE post_id = ?';
-                const checkQuery = 'SELECT * FROM Post WHERE post_id = ?';
+                if (result.length === 0) {
+                    connection.release();
+                    return reject({
+                        result: false,
+                        status: 404,
+                        err: '게시글을 찾을 수 없습니다.'
+                    });
+                }
 
-                pool.query(deleteCommentsQuery, [post_id], (err) => {
+                const post = result[0];
+                if (post.user_email !== user_email) {
+                    connection.release();
+                    return reject({
+                        result: false,
+                        status: 403,
+                        err: '게시글 삭제 권한이 없습니다.'
+                    });
+                }
+
+                const deleteQuery = 'DELETE FROM Post WHERE post_id = ? AND user_email = ?';
+                connection.query(deleteQuery, [post_id, user_email], (err, result) => {
+                    connection.release();
                     if (err) {
-                        pool.releaseConnection(connection);
-                        reject({
+                        return reject({
                             result: false,
                             status: 500,
                             err: `${err}`
                         });
+                    }
+
+                    if (result.affectedRows > 0) {
+                        return resolve({
+                            result: true,
+                            status: 200
+                        });
                     } else {
-                        pool.query(checkQuery, [post_id], (err, result) => {
-                            if (err) {
-                                pool.releaseConnection(connection);
-                                reject({
-                                    result: false,
-                                    status: 500,
-                                    err: `${err}`
-                                });
-                            } else {
-                                if (result.length > 0) {
-                                    const post = result[0];
-                                    if (post.user_email === user_email) {
-                                        const deleteQuery = 'DELETE FROM Post WHERE post_id=? AND user_email = ?';
-                                        pool.query(deleteQuery, [post_id, user_email], (err, result) => {
-                                            pool.releaseConnection(connection);
-                                            if (err) {
-                                                reject({
-                                                    result: false,
-                                                    status: 500,
-                                                    err: `${err}`
-                                                });
-                                            } else {
-                                                if (result.affectedRows > 0) {
-                                                    resolve({
-                                                        result: true,
-                                                        status: 200
-                                                    });
-                                                } else {
-                                                    reject({
-                                                        result: false,
-                                                        status: 404,
-                                                        err: '게시글을 찾을 수 없거나 삭제 권한이 없습니다.'
-                                                    });
-                                                }
-                                            }
-                                        });
-                                    } else {
-                                        pool.releaseConnection(connection);
-                                        reject({
-                                            result: false,
-                                            status: 403,
-                                            err: '게시글 삭제 권한이 없습니다.'
-                                        });
-                                    }
-                                } else {
-                                    pool.releaseConnection(connection);
-                                    reject({
-                                        result: false,
-                                        status: 404,
-                                        err: '게시글을 찾을 수 없습니다.'
-                                    });
-                                }
-                            }
+                        return reject({
+                            result: false,
+                            status: 404,
+                            err: '게시글을 찾을 수 없거나 삭제 권한이 없습니다.'
                         });
                     }
                 });
             });
         });
-    }
+    });
+}
     //게시글 작성자 반환
     static postWriter(post_id) {
         return new Promise((resolve, reject) => {

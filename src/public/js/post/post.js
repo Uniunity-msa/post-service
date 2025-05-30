@@ -47,7 +47,7 @@ const setLoginHeader = (res) => {
   }
   else {
     console.log("🛑 로그인 상태 아님 또는 사용자 정보 없음");
-    loginStatusBtn.setAttribute("href", `${userApiUrl}/login`);
+    loginStatusBtn.setAttribute("href", `${userApiUrl}/auth/login`);
     loginStatusBtn.innerText = "로그인"
     signUpBtn.setAttribute("href", `${userApiUrl}/user/agreement`);
     signUpBtn.innerText = "회원가입"
@@ -653,7 +653,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
           if (res.ok) {
             alert("로그아웃되었습니다.");
-            window.location.href = "/"; // 홈으로 리다이렉션
+            // 현재 URL에서 university_url 추출 후 리다이렉트
+            const currentUrl = window.location.href;
+            const universityUrl = currentUrl.split("/").pop();
+
+            window.location.href = `${postApiUrl}/showPostListAll/${universityUrl}`;
           } else {
             const data = await res.json();
             alert(data.message || "로그아웃에 실패했습니다.");
