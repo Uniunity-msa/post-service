@@ -95,9 +95,6 @@ const setLoginHeader = (res) => {
 const fetchPostData = async () => {
     let frontend_url = window.location.href;
     let category = frontend_url.split('/')[6];
-    // let req = {
-    //     user_email: userInfo.user_email // 사용자 이메일 받아오도록 수정 //
-    // }
 
     const commnunityPostTitle = document.getElementById("community_post_title")
     if (category === '1') {
@@ -114,32 +111,28 @@ const fetchPostData = async () => {
     const url = `${postApiUrl}/mypage/community/post/${category}`;
 
     console.log("api 요청 주소:", url);
-    console.log("요청 바디:", req);
 
-    await fetch(url, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(req),
-    })
-        .then((res) => res.json())
-        .then(res => {
-            console.log(res)
-            if (res.status === 200) {
-                res.result.forEach((data) => createCard(data));
-            }
-            else if (res.status === 202) {
-                createEmptyCard(res.result)
-            }
-            else {
-                alert("서버의 문제로 게시글 관리 접근에 실패했습니다. 다시 시도해주세요.");
-            }
-        })
-        .catch((error) => {
-            console.error("Error: ", error);
+    try {
+        const res = await fetch(url, {
+            method: "POST",
+            credentials: "include", // 세션 쿠키 전달 필수
+        });
+
+        const result = await res.json();
+
+        console.log(result);
+
+        if (result.status === 200) {
+            result.result.forEach((data) => createCard(data));
+        } else if (result.status === 202) {
+            createEmptyCard(result.result);
+        } else {
             alert("서버의 문제로 게시글 관리 접근에 실패했습니다. 다시 시도해주세요.");
-        })
+        }
+    } catch (error) {
+        console.error("Error: ", error);
+        alert("서버의 문제로 게시글 관리 접근에 실패했습니다. 다시 시도해주세요.");
+    }
 }
 
 function truncateText(elementId, maxLength, data) {
