@@ -7,6 +7,9 @@ const PORT = 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// 실제 API 라우터
+app.use("/", postRouter);
+
 // EJS 설정
 app.engine("html", require("ejs").renderFile);
 app.set("views", path.join(__dirname, "src/views"));  // 뷰 폴더 설정
@@ -40,10 +43,6 @@ app.get("/mypage/community/post/:category", (req, res) => {
   res.render("post/communityPost", { category: req.params.category });
 });
 
-
-
-// 실제 API 라우터
-app.use("/", postRouter);
 
 
 //  RabbitMQ consumer 실행 추가
