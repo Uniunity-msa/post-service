@@ -663,7 +663,7 @@ modifyPost.addEventListener("click",handleModifyClick);
 //댓글 지우기!!!
 const fetchDeleteComment = async (user_email, comment_id) => {
   try {
-    const url = `${reactionApiUrl}/doDeleteComment/${post_id}/${user_email}/${comment_id}`
+    const url = `${reactionApiUrl}/doDeleteComment/${user_email}/${comment_id}`
 
     const response = await fetch(url, {
       method: 'DELETE',
