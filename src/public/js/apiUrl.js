@@ -1,5 +1,5 @@
 // config.js;
-export const apiUrl = 'http://34.47.84.123'; 
+export const apiUrl = 'http://34.22.87.148'; 
 
 export const baseUrls = {
   post: `${apiUrl}:3000`, // post-service
