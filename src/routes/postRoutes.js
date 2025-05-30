@@ -44,9 +44,7 @@ router.patch("/decreaseComment", postController.decreaseComment);
 
 // 사용자 반응 게시글 불러오기
 router.post("/mypage/community/post/:category", postController.myCommunityPostData);
-router.get("/mypage/community/post/:category", (req, res) => {
-    res.render("post/communityPost", { category: req.params.category });
-  });
+
 //댓글
 router.get("/comments/:post_id", postController.getComments);
 
