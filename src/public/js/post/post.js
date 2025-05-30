@@ -10,17 +10,19 @@ const loadloginData = async () => {
   const res = await fetch(`${userApiUrl}/auth/me`, {
     credentials: "include", // 쿠키 포함
   });
-  
-  console.log("🔍 응답 상태:", res.status); // 200, 401 등
+
+  console.log("🔍 응답 상태:", res.status);
   console.log("🔍 응답 OK 여부:", res.ok);
 
-  if (!res.ok) {
-    alert("로그인이 필요합니다.");
-    return;
+  let data = null;
+
+  if (res.ok) {
+    data = await res.json();
+    console.log("✅ 받아온 유저 정보:", data);
+    userInfo = data;
   }
-  const data = await res.json();
-  console.log("✅ 받아온 유저 정보:", data); // 실제 유저 정보 로그
-  userInfo = data; 
+
+  // 로그인 안 됐어도 null 전달
   return data;
 };
 
@@ -409,7 +411,7 @@ window.addEventListener('DOMContentLoaded', async function () {
   
   const loginUser = await loadloginData(); 
   console.log("✅ 로그인 유저 정보:", loginUser); 
-  setLoginHeader(loginUser);
+  setLoginHeader(loginUser);// null이어도 작동하도록
 
 
   fetchPosts();
