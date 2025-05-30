@@ -23,6 +23,7 @@ const loadloginData = async () => {
   }
 
   // 로그인 안 됐어도 null 전달
+  console.log("✅유저정보 ", data);
   return data;
 };
 
@@ -45,6 +46,7 @@ const setLoginHeader = (res) => {
     // backBtn.setAttribute("href", `${startApiUrl}/council/${university_url}`);
   }
   else {
+    console.log("🛑 로그인 상태 아님 또는 사용자 정보 없음");
     loginStatusBtn.setAttribute("href", `${userApiUrl}/login`);
     loginStatusBtn.innerText = "로그인"
     signUpBtn.setAttribute("href", `${userApiUrl}/user/agreement`);
