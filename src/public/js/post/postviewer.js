@@ -531,6 +531,7 @@ writeCommentBtn.addEventListener('click', function () {
 
           } else {
             // 등록 실패한 경우, 오류 메시지를 표시하거나 다른 처리를 수행
+            console.error('댓글 등록 실패data:', data);
             console.error('댓글 등록 실패:', data.err);
           }
         })
@@ -662,7 +663,7 @@ modifyPost.addEventListener("click",handleModifyClick);
 //댓글 지우기!!!
 const fetchDeleteComment = async (user_email, comment_id) => {
   try {
-    const url = `/doDeleteComment/${post_id}/${user_email}/${comment_id}`
+    const url = `${reactionApiUrl}/doDeleteComment/${post_id}/${user_email}/${comment_id}`
 
     const response = await fetch(url, {
       method: 'DELETE',

@@ -237,11 +237,11 @@ async getUserScrapList(user_email) {
 
   async doDeletePost(postId, userEmail) {
     try {
-      const result = await PostStorage.goDeletePost(post_id, user_email);
+      const result = await PostStorage.goDeletePost(postId, userEmail);
 
       // 게시글 삭제에 성공했을 때만 댓글 삭제 요청
       if (result.result === true) {
-        const commentDelete = await ReactionClient.deleteAllCommentsByPostId(post_id);
+        const commentDelete = await ReactionClient.deleteAllCommentsByPostId(postId);
         console.log("✅ 댓글 삭제 완료:", commentDelete);
       }
 
@@ -362,7 +362,7 @@ async getComments(post_id) {
       return {success:false ,msg:err};
     }
   }
-  
+
 //댓글 증가감소
 
    async increaseCommentCount(post_id) {
