@@ -36,6 +36,7 @@ app.get("/showPostListAll/:university_url", (req, res) => {
 });
 
 app.get("/mypage/community/post/:category", (req, res) => {
+  console.log("index.js GET 요청 받음");
   res.render("post/communityPost", { category: req.params.category });
 });
 

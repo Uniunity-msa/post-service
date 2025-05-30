@@ -92,9 +92,11 @@ const setLoginHeader = (res) => {
 }
 
 const fetchPostData = async () => {
+    console.log("fetchPostData 호출");
     let frontend_url = window.location.href;
     let category = frontend_url.split('/')[6];
-
+console.log("category");
+console.log(category);
     const commnunityPostTitle = document.getElementById("community_post_title")
     if (category === '1') {
         commnunityPostTitle.textContent = '내가 작성한 게시글'
@@ -112,6 +114,7 @@ const fetchPostData = async () => {
     console.log("api 요청 주소:", url);
 
     try {
+        console.log(url, "로 fetch 함수 호출");
         const res = await fetch(url, {
             method: "POST",
             credentials: "include", // 세션 쿠키 전달 필수

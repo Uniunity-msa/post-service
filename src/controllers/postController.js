@@ -204,6 +204,11 @@ const postController = {
 
   // 마이페이지 → 내가 작성한 글 / 댓글 단 글 / 좋아요 / 스크랩 글 조회
   myCommunityPostData: async (req, res) => {
+    console.log("컨트롤러 안에 들어옴, try 전");
+    console.log("req");
+    console.log(req);
+    console.log("req.params.category");
+    console.log(req.params.category);
     try {
       console.log("[Post_postController] myCommunityPostData 컨트롤러 호출");
       // 쿠키를 통해 사용자 정보 가져오기
