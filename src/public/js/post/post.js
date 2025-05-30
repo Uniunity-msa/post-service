@@ -26,7 +26,7 @@ const loadloginData = async () => {
 
 
 
-// const loginStatusBtn = document.getElementById("loginStatusBtn");
+const loginStatusBtn = document.getElementById("loginStatusBtn");
 const signUpBtn = document.getElementById("signUpBtn");
 // const backBtn = document.getElementById("backBtn");
 const navBar = document.getElementById("navbar-brand");
@@ -44,7 +44,7 @@ const setLoginHeader = (res) => {
   else {
     loginStatusBtn.setAttribute("href", `${userApiUrl}/login`);
     loginStatusBtn.innerText = "로그인"
-    signUpBtn.setAttribute("href", `${userApiUrl}/user/signup/:marketing`);
+    signUpBtn.setAttribute("href", `${userApiUrl}/user/agreement`);
     signUpBtn.innerText = "회원가입"
     // backBtn.setAttribute("href", `${startApiUrl}/council/${university_url}`);
   }
