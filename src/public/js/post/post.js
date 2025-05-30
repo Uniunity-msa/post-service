@@ -33,6 +33,7 @@ const navBar = document.getElementById("navbar-brand");
 const universityName = document.getElementById("university_name");
 
 const setLoginHeader = (res) => {
+    console.log("🔍 setLoginHeader 실행됨, 전달받은 값:", res);
   navBar.setAttribute("href", `${postApiUrl}/showPostListAll/${university_url}`);
   if (res.user_email) {
     loginStatusBtn.removeAttribute("href"); 
@@ -407,6 +408,7 @@ window.addEventListener('DOMContentLoaded', async function () {
   getUniversityName();
   
   const loginUser = await loadloginData(); 
+  console.log("✅ 로그인 유저 정보:", loginUser); 
   setLoginHeader(loginUser);
 
 
