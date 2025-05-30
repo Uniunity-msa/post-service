@@ -514,7 +514,10 @@ writeCommentBtn.addEventListener('click', function () {
       })
         .then(response => response.json())
         .then(data => { //data.status === 201
-          if (data.result === true) {
+          console.log("🔥 댓글 등록 응답 데이터:", data);
+          console.log("🔥 status:", data.status);
+          console.log("🔥 result:", data.result);
+          if (data.status === 201) {
             // 등록 성공한 경우, 등록한 댓글을 프론트엔드에 표시
             // const commentViewer = document.getElementById('comment_content');
             // const commentElement = document.createElement('p');
@@ -524,9 +527,7 @@ writeCommentBtn.addEventListener('click', function () {
  
             fetchComments();
             document.querySelector('.comment-form textarea').value = "";
-            displayCommentNum(); // 댓글 수 다시 불러오기 추가
-            alert("댓글이 등록되었습니다.");  // 추가 알림
-          
+                    
 
           } else {
             // 등록 실패한 경우, 오류 메시지를 표시하거나 다른 처리를 수행
