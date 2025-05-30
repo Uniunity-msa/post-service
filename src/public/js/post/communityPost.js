@@ -35,8 +35,7 @@ const fetchLoginData = async () => {
         userInfo = data; // user_email, university_url 등 저장
         setLoginHeader(data);
 
-        // 유저 정보를 안전하게 받은 뒤 post 데이터 요청
-        fetchPostData();
+        
         // 현재 경로가 /mypage가 아니면 리다이렉트
         if (window.location.pathname !== '/mypage') {
             window.location.href = redirectUri;
@@ -240,6 +239,6 @@ function createCard(data) {
 // 로드 후 loadData()실행
 window.addEventListener('DOMContentLoaded', async function () {
     await fetchLoginData();
-    //await fetchPostData();
+    await fetchPostData();
 
 });
