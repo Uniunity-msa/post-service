@@ -33,7 +33,7 @@ const fetchLoginData = async () => {
         }
 
         userInfo = data; // user_email, university_url 등 저장
-        setLoginHeader(data);
+        //setLoginHeader(data);
 
         
         // 현재 경로가 /mypage가 아니면 리다이렉트
