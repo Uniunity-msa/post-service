@@ -13,6 +13,8 @@ class Post {
   }
 
   async connectToRabbitMQ() {
+    const RETRY_COUNT = 10;
+    const RETRY_DELAY = 2000; // 2초
     const rabbitUrl = process.env.RABBIT || 'amqp://localhost';
     const QUEUES = [
       'CommentRequestQueue',
@@ -73,52 +75,52 @@ class Post {
   //     });
   // }
 
-//(마이페이지)내가 댓글 작성한 게시글 불러오기
-async myCommunityCommentPost(user_email) {
-try {
-  const correlationId = uuidv4();
+// //(마이페이지)내가 댓글 작성한 게시글 불러오기
+// async myCommunityCommentPost(user_email) {
+// try {
+//   const correlationId = uuidv4();
 
-  //응답 받을 임시큐
-  const tempQueue = await new Promise((resolve, reject) => {
-    this.channel.assertQueue('', { exclusive: true }, (err, q) => {
-      if (err) return reject(err);
-      resolve(q.queue);
-    });
-  });
+//   //응답 받을 임시큐
+//   const tempQueue = await new Promise((resolve, reject) => {
+//     this.channel.assertQueue('', { exclusive: true }, (err, q) => {
+//       if (err) return reject(err);
+//       resolve(q.queue);
+//     });
+//   });
 
-  const message = { user_email};
+//   const message = { user_email};
 
-  // 응답 대기 
-  const response = await new Promise((resolve, reject) => {
-    this.channel.consume(tempQueue, async (msg) => {
-      if (msg.properties.correlationId === correlationId) {
-        //테스트용
-        console.log('[post-service] CommentRequestQueue 메시지 수신:', msg.content.toString());
+//   // 응답 대기 
+//   const response = await new Promise((resolve, reject) => {
+//     this.channel.consume(tempQueue, async (msg) => {
+//       if (msg.properties.correlationId === correlationId) {
+//         //테스트용
+//         console.log('[post-service] CommentRequestQueue 메시지 수신:', msg.content.toString());
            
-        const postIds = JSON.parse(msg.content.toString());
-        const data = await PostStorage.getMyCommentPost(postIds);
-        resolve(data);
-      }
-    }, { noAck: true });
+//         const postIds = JSON.parse(msg.content.toString());
+//         const data = await PostStorage.getMyCommentPost(postIds);
+//         resolve(data);
+//       }
+//     }, { noAck: true });
 
-    // 요청 메세지 보내기
-    this.channel.sendToQueue('CommentRequestQueue', Buffer.from(JSON.stringify(message)), {
-        replyTo: tempQueue,
-        correlationId,
-        persistent: true,
-      }
-    );
-  });
+//     // 요청 메세지 보내기
+//     this.channel.sendToQueue('CommentRequestQueue', Buffer.from(JSON.stringify(message)), {
+//         replyTo: tempQueue,
+//         correlationId,
+//         persistent: true,
+//       }
+//     );
+//   });
 
-  return response;
+//   return response;
 
-} catch (err) {
-  return {
-      result: false,
-      status: 500,
-      msg: err.message || err,
-  };
-}}
+// } catch (err) {
+//   return {
+//       result: false,
+//       status: 500,
+//       msg: err.message || err,
+//   };
+// }}
 
 // 마이페이지) 유저 좋아요 목록 보기
 async getUserHeartList(user_email) {
