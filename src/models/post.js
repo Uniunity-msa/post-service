@@ -12,35 +12,66 @@ class Post {
       this.channel = null;
   }
 
-  // 채널이 준비될 때까지 기다리는 Promise를 반환
-  connectToRabbitMQ() {
-      return new Promise((resolve, reject) => {
-          amqp.connect('amqp://guest:guest@rabbit:5672', (err, connection) => { // 나중에 IP 주소 바꾸기
-              if (err) {
-                  console.error('RabbitMQ 연결 오류:', err);
-                  reject(err);
-                  return;
-              }
-
-              connection.createChannel((err, channel) => {
-                  if (err) {
-                      console.error('채널 생성 오류:', err);
-                      reject(err);
-                      return;
-                  }
-
-                  this.channel = channel;
-
-                  // 큐 선언
-                  this.channel.assertQueue('CommentRequestQueue', { durable: true });
-                  this.channel.assertQueue('HeartRequestQueue', { durable: true });
-                  this.channel.assertQueue('ScrapRequestQueue', { durable: true });  
-                  
-                  resolve(); // 채널 준비 완료 후 resolve
-              });
-          });
-      });
+  async connectToRabbitMQ() {
+    const rabbitUrl = process.env.RABBIT || 'amqp://localhost';
+    const QUEUES = [
+      'CommentRequestQueue',
+      'HeartRequestQueue',
+      'ScrapRequestQueue',
+    ];
+    for (let i = 0; i < RETRY_COUNT; i++) {
+      try {
+        const connection = await amqp.connect(rabbitUrl);
+        channel = await connection.createChannel();
+  
+        // 모든 큐 선언 (필요 시 SEND_QUEUES 도 추가 가능)
+        for (const queue of QUEUES) {
+          await channel.assertQueue(queue, { durable: false });
+        }
+  
+        console.log("✅ 게시글 불러오기 통신 RabbitMQ 연결 성공");
+        return channel;
+      } catch (err) {
+        console.error(`❌ 게시글 불러오기 통신 RabbitMQ 연결 실패 (${i + 1}/${RETRY_COUNT}):`, err.message);
+        if (i < RETRY_COUNT - 1) {
+          await new Promise((res) => setTimeout(res, RETRY_DELAY));
+        } else {
+          console.error("💥 게시글 불러오기 통신 모든 재시도 실패. RabbitMQ 연결에 실패했습니다.");
+          throw err;
+        }
+      }
+    }
   }
+
+  // // 채널이 준비될 때까지 기다리는 Promise를 반환
+  // connectToRabbitMQ() {
+  //     return new Promise((resolve, reject) => {
+  //         amqp.connect('amqp://guest:guest@rabbit:5672', (err, connection) => { // 나중에 IP 주소 바꾸기
+  //             if (err) {
+  //                 console.error('RabbitMQ 연결 오류:', err);
+  //                 reject(err);
+  //                 return;
+  //             }
+
+  //             connection.createChannel((err, channel) => {
+  //                 if (err) {
+  //                     console.error('채널 생성 오류:', err);
+  //                     reject(err);
+  //                     return;
+  //                 }
+
+  //                 this.channel = channel;
+
+  //                 // 큐 선언
+  //                 this.channel.assertQueue('CommentRequestQueue', { durable: true });
+  //                 this.channel.assertQueue('HeartRequestQueue', { durable: true });
+  //                 this.channel.assertQueue('ScrapRequestQueue', { durable: true });  
+                  
+  //                 resolve(); // 채널 준비 완료 후 resolve
+  //             });
+  //         });
+  //     });
+  // }
 
 //(마이페이지)내가 댓글 작성한 게시글 불러오기
 async myCommunityCommentPost(user_email) {
