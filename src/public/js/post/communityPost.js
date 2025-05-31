@@ -36,10 +36,10 @@ const fetchLoginData = async () => {
         //setLoginHeader(data);
 
         
-        // 현재 경로가 /mypage가 아니면 리다이렉트
-        if (window.location.pathname !== '/mypage') {
-            window.location.href = redirectUri;
-         }
+        // // 현재 경로가 /mypage가 아니면 리다이렉트
+        // if (window.location.pathname !== '/mypage') {
+        //     window.location.href = redirectUri;
+        //  }
     } catch (error) {
         console.error("로그인 정보 확인 실패:", error);
 
