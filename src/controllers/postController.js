@@ -209,6 +209,8 @@ const postController = {
       // 쿠키를 통해 사용자 정보 가져오기
       const user = await fetchUserInfoFromUserService(req.headers.cookie);
       const user_email = user.user_email;
+      console.log("user_email");
+      console.log(user_email);
       let response;
       if (req.params.category === '1') {
         response = await postWithRabbitMQ.myCommunityPost(user_email);
