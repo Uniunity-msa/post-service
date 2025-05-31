@@ -206,6 +206,10 @@ const postController = {
   myCommunityPostData: async (req, res) => {
     try {
       console.log("컨트롤러 호출됨");
+      if (!postWithRabbitMQ.channel) {
+        console.log("채널이 초기화되지 않아 connectToRabbitMQ() 호출");
+        await postWithRabbitMQ.connectToRabbitMQ();
+      }  
       // 쿠키를 통해 사용자 정보 가져오기
       const user = await fetchUserInfoFromUserService(req.headers.cookie);
       const user_email = user.user_email;
