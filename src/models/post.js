@@ -12,115 +12,83 @@ class Post {
       this.channel = null;
   }
 
-  // async connectToRabbitMQ() {
-  //   const RETRY_COUNT = 10;
-  //   const RETRY_DELAY = 2000; // 2초
-  //   const rabbitUrl = process.env.RABBIT || 'amqp://localhost';
-  //   const QUEUES = [
-  //     'CommentRequestQueue',
-  //     'HeartRequestQueue',
-  //     'ScrapRequestQueue',
-  //   ];
-  //   for (let i = 0; i < RETRY_COUNT; i++) {
-  //     try {
-  //       const connection = await amqp.connect(rabbitUrl);
-  //       channel = await connection.createChannel();
-  
-  //       // 모든 큐 선언 (필요 시 SEND_QUEUES 도 추가 가능)
-  //       for (const queue of QUEUES) {
-  //         await channel.assertQueue(queue, { durable: false });
-  //       }
-  
-  //       console.log("✅ 게시글 불러오기 통신 RabbitMQ 연결 성공");
-  //       return channel;
-  //     } catch (err) {
-  //       console.error(`❌ 게시글 불러오기 통신 RabbitMQ 연결 실패`, err.message);
-  //       if (i < RETRY_COUNT - 1) {
-  //         await new Promise((res) => setTimeout(res, RETRY_DELAY));
-  //       } else {
-  //         console.error("💥 게시글 불러오기 통신 모든 재시도 실패. RabbitMQ 연결에 실패했습니다.");
-  //         throw err;
-  //       }
-  //     }
-  //   }
-  // }
 
-  // // 채널이 준비될 때까지 기다리는 Promise를 반환
-  // connectToRabbitMQ() {
-  //     return new Promise((resolve, reject) => {
-  //         amqp.connect('amqp://guest:guest@rabbit:5672', (err, connection) => { // 나중에 IP 주소 바꾸기
-  //             if (err) {
-  //                 console.error('RabbitMQ 연결 오류:', err);
-  //                 reject(err);
-  //                 return;
-  //             }
+  // 채널이 준비될 때까지 기다리는 Promise를 반환
+  connectToRabbitMQ() {
+      return new Promise((resolve, reject) => {
+          amqp.connect('amqp://guest:guest@rabbit:5672', (err, connection) => { // 나중에 IP 주소 바꾸기
+              if (err) {
+                  console.error('RabbitMQ 연결 오류:', err);
+                  reject(err);
+                  return;
+              }
 
-  //             connection.createChannel((err, channel) => {
-  //                 if (err) {
-  //                     console.error('채널 생성 오류:', err);
-  //                     reject(err);
-  //                     return;
-  //                 }
+              connection.createChannel((err, channel) => {
+                  if (err) {
+                      console.error('채널 생성 오류:', err);
+                      reject(err);
+                      return;
+                  }
 
-  //                 this.channel = channel;
+                  this.channel = channel;
 
-  //                 // 큐 선언
-  //                 this.channel.assertQueue('CommentRequestQueue', { durable: true });
-  //                 this.channel.assertQueue('HeartRequestQueue', { durable: true });
-  //                 this.channel.assertQueue('ScrapRequestQueue', { durable: true });  
+                  // 큐 선언
+                  this.channel.assertQueue('CommentRequestQueue', { durable: true });
+                  this.channel.assertQueue('HeartRequestQueue', { durable: true });
+                  this.channel.assertQueue('ScrapRequestQueue', { durable: true });  
                   
-  //                 resolve(); // 채널 준비 완료 후 resolve
-  //             });
-  //         });
-  //     });
-  // }
+                  resolve(); // 채널 준비 완료 후 resolve
+              });
+          });
+      });
+  }
 
-// //(마이페이지)내가 댓글 작성한 게시글 불러오기
-// async myCommunityCommentPost(user_email) {
-// try {
-//   const correlationId = uuidv4();
+//(마이페이지)내가 댓글 작성한 게시글 불러오기
+async myCommunityCommentPost(user_email) {
+try {
+  const correlationId = uuidv4();
 
-//   //응답 받을 임시큐
-//   const tempQueue = await new Promise((resolve, reject) => {
-//     this.channel.assertQueue('', { exclusive: true }, (err, q) => {
-//       if (err) return reject(err);
-//       resolve(q.queue);
-//     });
-//   });
+  //응답 받을 임시큐
+  const tempQueue = await new Promise((resolve, reject) => {
+    this.channel.assertQueue('', { exclusive: true }, (err, q) => {
+      if (err) return reject(err);
+      resolve(q.queue);
+    });
+  });
 
-//   const message = { user_email};
+  const message = { user_email};
 
-//   // 응답 대기 
-//   const response = await new Promise((resolve, reject) => {
-//     this.channel.consume(tempQueue, async (msg) => {
-//       if (msg.properties.correlationId === correlationId) {
-//         //테스트용
-//         console.log('[post-service] CommentRequestQueue 메시지 수신:', msg.content.toString());
+  // 응답 대기 
+  const response = await new Promise((resolve, reject) => {
+    this.channel.consume(tempQueue, async (msg) => {
+      if (msg.properties.correlationId === correlationId) {
+        //테스트용
+        console.log('[post-service] CommentRequestQueue 메시지 수신:', msg.content.toString());
            
-//         const postIds = JSON.parse(msg.content.toString());
-//         const data = await PostStorage.getMyCommentPost(postIds);
-//         resolve(data);
-//       }
-//     }, { noAck: true });
+        const postIds = JSON.parse(msg.content.toString());
+        const data = await PostStorage.getMyCommentPost(postIds);
+        resolve(data);
+      }
+    }, { noAck: true });
 
-//     // 요청 메세지 보내기
-//     this.channel.sendToQueue('CommentRequestQueue', Buffer.from(JSON.stringify(message)), {
-//         replyTo: tempQueue,
-//         correlationId,
-//         persistent: true,
-//       }
-//     );
-//   });
+    // 요청 메세지 보내기
+    this.channel.sendToQueue('CommentRequestQueue', Buffer.from(JSON.stringify(message)), {
+        replyTo: tempQueue,
+        correlationId,
+        persistent: true,
+      }
+    );
+  });
 
-//   return response;
+  return response;
 
-// } catch (err) {
-//   return {
-//       result: false,
-//       status: 500,
-//       msg: err.message || err,
-//   };
-// }}
+} catch (err) {
+  return {
+      result: false,
+      status: 500,
+      msg: err.message || err,
+  };
+}}
 
 // 마이페이지) 유저 좋아요 목록 보기
 async getUserHeartList(user_email) {

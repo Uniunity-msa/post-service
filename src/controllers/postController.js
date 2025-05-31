@@ -7,10 +7,10 @@ const { fetchUserInfoFromUserService } = require("../utils/userClient");
 // const postWithRabbitMQ = new Post(); // 전역 인스턴스
 const { sendUniversityURL, receiveUniversityData } = require("../rabbit/rabbitMQ");
 
-// // 서버 시작할 때 RabbitMQ 연결해두기
-// postWithRabbitMQ.connectToRabbitMQ()
-//   .then(() => console.log("RabbitMQ 사전 연결 완료"))
-//   .catch((err) => console.error("RabbitMQ 사전 연결 실패", err));
+// 서버 시작할 때 RabbitMQ 연결해두기
+postWithRabbitMQ.connectToRabbitMQ()
+  .then(() => console.log("RabbitMQ 사전 연결 완료"))
+  .catch((err) => console.error("RabbitMQ 사전 연결 실패", err));
 
   
 const postController = {
@@ -206,11 +206,10 @@ const postController = {
   myCommunityPostData: async (req, res) => {
     try {
       console.log("컨트롤러 호출됨");
-      const post = new Post();
-      // if (!postWithRabbitMQ.channel) {
-      //   console.log("채널이 초기화되지 않아 connectToRabbitMQ() 호출");
-      //   await postWithRabbitMQ.connectToRabbitMQ();
-      // }  
+      if (!postWithRabbitMQ.channel) {
+        console.log("채널이 초기화되지 않아 connectToRabbitMQ() 호출");
+        await postWithRabbitMQ.connectToRabbitMQ();
+      }  
       // 쿠키를 통해 사용자 정보 가져오기
       const user = await fetchUserInfoFromUserService(req.headers.cookie);
       const user_email = user.user_email;
@@ -218,13 +217,13 @@ const postController = {
       console.log(user_email);
       let response;
       if (req.params.category === '1') {
-        response = await post.myCommunityPost(user_email);
+        response = await postWithRabbitMQ.myCommunityPost(user_email);
       } else if (req.params.category === '2') {
-        response = await post.myCommunityCommentPost(user_email);
+        response = await postWithRabbitMQ.myCommunityCommentPost(user_email);
       } else if (req.params.category === '3') {
-        response = await post.getUserHeartList(user_email);
+        response = await postWithRabbitMQ.getUserHeartList(user_email);
       } else if (req.params.category === '4') {
-        response = await post.getUserScrapList(user_email);
+        response = await postWithRabbitMQ.getUserScrapList(user_email);
       } else {
         return res.status(400).json({ error: 'Invalid category' });
       }
