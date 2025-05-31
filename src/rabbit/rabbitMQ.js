@@ -1,11 +1,14 @@
 const amqp = require("amqplib");
+const PostStorage = require("../models/postStorage");
 
 const RECV_QUEUES = [
   'RecvPostUniversityName',
   'RecvPostUniversityID',
   'RecvPostList',
-  'SendPostList'
-  
+  'SendPostList',
+  'CommentRequestQueue',
+  'HeartRequestQueue',
+  'ScrapRequestQueue',
 ];
 
 let channel;
@@ -139,9 +142,56 @@ async function consumePostListRequest(callback) {
   }
 }
 
+//(마이페이지)내가 댓글 작성한 게시글 불러오기
+async function myCommunityCommentPost(user_email) {
+try {
+  const correlationId = uuidv4();
+
+  //응답 받을 임시큐
+  const tempQueue = await new Promise((resolve, reject) => {
+    channel.assertQueue('', { exclusive: true }, (err, q) => {
+      if (err) return reject(err);
+      resolve(q.queue);
+    });
+  });
+
+  const message = { user_email};
+
+  // 응답 대기 
+  const response = await new Promise((resolve, reject) => {
+    channel.consume(tempQueue, async (msg) => {
+      if (msg.properties.correlationId === correlationId) {
+        //테스트용
+        console.log('[post-service] CommentRequestQueue 메시지 수신:', msg.content.toString());
+           
+        const postIds = JSON.parse(msg.content.toString());
+        const data = await PostStorage.getMyCommentPost(postIds);
+        resolve(data);
+      }
+    }, { noAck: true });
+
+    // 요청 메세지 보내기
+    channel.sendToQueue('CommentRequestQueue', Buffer.from(JSON.stringify(message)), {
+        replyTo: tempQueue,
+        correlationId,
+        persistent: true,
+      }
+    );
+  });
+
+  return response;
+
+} catch (err) {
+  return {
+      result: false,
+      status: 500,
+      msg: err.message || err,
+  };
+}}
 
 module.exports = {
   sendUniversityURL,
   receiveUniversityData,
-  consumePostListRequest
+  consumePostListRequest,
+  myCommunityCommentPost
 };

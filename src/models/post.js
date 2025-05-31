@@ -32,7 +32,7 @@ class Post {
         console.log("✅ 게시글 불러오기 통신 RabbitMQ 연결 성공");
         return channel;
       } catch (err) {
-        console.error(`❌ 게시글 불러오기 통신 RabbitMQ 연결 실패 (${i + 1}/${RETRY_COUNT}):`, err.message);
+        console.error(`❌ 게시글 불러오기 통신 RabbitMQ 연결 실패`, err.message);
         if (i < RETRY_COUNT - 1) {
           await new Promise((res) => setTimeout(res, RETRY_DELAY));
         } else {
