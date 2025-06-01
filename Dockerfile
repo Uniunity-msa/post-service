@@ -22,4 +22,4 @@ RUN chmod +x wait-for.sh
 EXPOSE 3000
 
 # 6. 서버 실행
-CMD ["./wait-for.sh", "mysql_host", "3306", "node", "index.js"]
+CMD ["./wait-for.sh", "post-service-db", "3306", "node", "index.js"]
