@@ -8,7 +8,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // 실제 API 라우터
-app.use("/", postRouter);
+app.use("/post", postRouter);
 
 // EJS 설정
 app.engine("html", require("ejs").renderFile);

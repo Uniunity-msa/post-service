@@ -15,7 +15,7 @@ const reactionApiUrl = baseUrls.reaction;
 
 // 작성자 회원 정보 불러오기 (jwt방식으로 변경)
 const loadloginData = async () => {
-  const res = await fetch(`${userApiUrl}/auth/me`, {
+  const res = await fetch(`${userApiUrl}/me`, {
     credentials: "include", // 쿠키 포함
   });
 

@@ -15,7 +15,7 @@ const redirectUri = `${currentUrl}/mypage`; // 로그인/로그아웃 완료 후
 // 유저 로그인 상태 확인 및 정보 로드
 const fetchLoginData = async () => {
     try {
-        const url = `${userApiUrl}/auth/me`; 
+        const url = `${userApiUrl}/me`; 
 
         const res = await fetch(url, {
             credentials: "include",
@@ -28,7 +28,7 @@ const fetchLoginData = async () => {
 
         if (!data.loginStatus) {
             alert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
-            window.location.href = `${userApiUrl}/auth/login`;
+            window.location.href = `${userApiUrl}/login`;
             return;
         }
 
@@ -44,7 +44,7 @@ const fetchLoginData = async () => {
         console.error("로그인 정보 확인 실패:", error);
 
         alert("서버 문제로 로그인 정보를 확인하지 못했습니다.");
-        window.location.href = `${userApiUrl}/auth/login`;
+        window.location.href = `${userApiUrl}/login`;
     }
 };
 
@@ -60,7 +60,7 @@ const setLoginHeader = (res) => {
                 //테스트용
                 console.log("[로그아웃] 요청 시작");
 
-                const response = await fetch(`${userServiceUrl}/auth/logout`, {
+                const response = await fetch(`${userServiceUrl}/logout`, {
                     credentials: "include",
                 });
 
@@ -86,7 +86,7 @@ const setLoginHeader = (res) => {
     }
     else {
         alert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
-        window.location.href = `${userApiUrl}/auth/login`; // 리다이렉션 처리
+        window.location.href = `${userApiUrl}/login`; // 리다이렉션 처리
     }
 
 }

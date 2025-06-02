@@ -3,11 +3,12 @@ import { baseUrls } from '/post/js/apiUrl.js';
 let userInfo; // 유저정보
 const postApiUrl = baseUrls.post;
 const userApiUrl = baseUrls.user;
+const userApiUrl2 = baseUrls.user2;
 const reactionApiUrl = baseUrls.reaction;
 const startApiUrl = baseUrls.start;
 // 작성자 회원 정보 불러오기
 const loadloginData = async () => {
-  const res = await fetch(`${userApiUrl}/auth/me`, {
+  const res = await fetch(`${userApiUrl}/me`, {
     credentials: "include", // 쿠키 포함
   });
 
@@ -47,9 +48,9 @@ const setLoginHeader = (res) => {
   }
   else {
     console.log("🛑 로그인 상태 아님 또는 사용자 정보 없음");
-    loginStatusBtn.setAttribute("href", `${userApiUrl}/auth/login`);
+    loginStatusBtn.setAttribute("href", `${userApiUrl}/login`);
     loginStatusBtn.innerText = "로그인"
-    signUpBtn.setAttribute("href", `${userApiUrl}/user/agreement`);
+    signUpBtn.setAttribute("href", `${userApiUrl2}/agreement`);
     signUpBtn.innerText = "회원가입"
     // backBtn.setAttribute("href", `${startApiUrl}/council/${university_url}`);
   }
@@ -61,7 +62,7 @@ const brandNav = document.getElementById('navbar-brand');
 writePostBtn.addEventListener('click', async function () {
   try {
     // 1. 로그인된 사용자 정보를 확인하기 위해 /auth/me API 요청 (쿠키 포함)
-    const res = await fetch(`${userApiUrl}/auth/me`, {
+    const res = await fetch(`${userApiUrl}/me`, {
       credentials: "include", // 쿠키 포함해서 서버에 인증 요청
     });
 
