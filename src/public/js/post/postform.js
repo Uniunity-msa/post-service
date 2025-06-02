@@ -174,7 +174,7 @@ function uploadPost(postCategory) {
     const data = await res.json();
       if (res.status === 201) {
         console.log("게시글 작성 완료");
-        window.location.href = `/showPostListAll/${userInfo.university_url}`; // 리다이렉션 처리
+        window.location.href = `/post/all/${userInfo.university_url}`; // 리다이렉션 처리
       } else {
         alert("서버의 문제로 게시글 작성이 실패했습니다. 다시 시도해주세요.");
       }
