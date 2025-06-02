@@ -19,11 +19,12 @@ class Post {
 // 채널이 준비될 때까지 기다리는 Promise를 반환
 connectToRabbitMQ() {
     return new Promise(async (resolve, reject) => {
+        const rabbitUrl = process.env.RABBIT || 'amqp://guest:guest@rabbitmq:5672';
         for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
             try {
                 console.log(`[RabbitMQ] 연결 시도 (${attempt}/${MAX_RETRIES})`);
                 const connection = await new Promise((res, rej) =>
-                    amqp.connect('amqp://guest:guest@rabbit:5672', (err, conn) => err ? rej(err) : res(conn))
+                    amqp.connect(rabbitUrl, (err, conn) => err ? rej(err) : res(conn))
                 );
 
                 const channel = await new Promise((res, rej) =>

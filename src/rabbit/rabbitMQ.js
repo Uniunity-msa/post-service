@@ -13,8 +13,8 @@ const RETRY_COUNT = 10;
 const RETRY_DELAY = 2000; // 2초
 
 async function connectRabbitMQ() {
-  const rabbitUrl = process.env.RABBIT || 'amqp://localhost';
-
+  const rabbitUrl = process.env.RABBIT || 'amqp://guest:guest@rabbitmq:5672';
+  console.log(" RabbitMQ 연결 주소:", rabbitUrl);
   for (let i = 0; i < RETRY_COUNT; i++) {
     try {
       const connection = await amqp.connect(rabbitUrl);
