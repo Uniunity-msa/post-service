@@ -1,4 +1,4 @@
-import { baseUrls } from '/js/apiUrl.js';
+import { baseUrls } from '/post/js/apiUrl.js';
 
 var currentUrl = window.location.href;
 var post_id = currentUrl.split("/").pop();

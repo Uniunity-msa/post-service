@@ -1,4 +1,4 @@
-import { baseUrls } from '/js/apiUrl.js';
+import { baseUrls } from '/post/js/apiUrl.js';
 
 const postApiUrl = baseUrls.post;
 const userApiUrl = baseUrls.user;

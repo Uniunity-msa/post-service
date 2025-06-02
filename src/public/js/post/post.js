@@ -1,4 +1,4 @@
-import { baseUrls } from '/js/apiUrl.js';
+import { baseUrls } from '/post/js/apiUrl.js';
 
 let userInfo; // 유저정보
 const postApiUrl = baseUrls.post;
