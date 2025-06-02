@@ -18,6 +18,10 @@ app.set("view engine", "ejs");                        // EJS 사용
 // 정적 리소스 제공 (CSS, JS 등)
 app.use(express.static(path.join(__dirname, "src/public")));
 
+// 추가: /post 경로 전용 정적 리소스
+app.use("/post/css", express.static(path.join(__dirname, "src/public/css")));
+app.use("/post/js", express.static(path.join(__dirname, "src/public/js")));
+
 // EJS 뷰 렌더링 라우터
 app.get("/postform/:university_url", (req, res) => {
   res.render("post/postform", { university_url: req.params.university_url });
