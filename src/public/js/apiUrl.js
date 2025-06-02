@@ -5,5 +5,6 @@ export const baseUrls = {
   reaction: `${apiUrl}/reaction`,
   user: `${apiUrl}/auth`,
   user2: `${apiUrl}/user`,
-  start: `${apiUrl}/start`
+  start: `${apiUrl}/council`,
+  partner: `${apiUrl}/partner` 
 };

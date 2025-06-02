@@ -5,6 +5,7 @@ const postApiUrl = baseUrls.post;
 const userApiUrl = baseUrls.user;
 const userApiUrl2 = baseUrls.user2;
 const reactionApiUrl = baseUrls.reaction;
+const partnerApiUrl = baseUrls.partner;
 const startApiUrl = baseUrls.start;
 // 작성자 회원 정보 불러오기
 const loadloginData = async () => {
@@ -135,10 +136,37 @@ const storePromotionBtn = document.getElementById('store_promotion');
 const row = document.querySelector('.row');
 const col = document.querySelector('.col');
 
-affiliateRegistrationBtn.addEventListener('click', function () {
-  window.location.href = `${postApiUrl}/partner/${university_url}`; // 제휴 등록은 제휴가게 페이지로 이동
-  return; // 리다이렉션 후 함수 종료
-})
+affiliateRegistrationBtn.addEventListener('click', async function () {
+  try {
+    // 현재 URL에서 university_url 추출
+    const currentUrl = window.location.href;
+    const universityUrl = currentUrl.split("/").pop();
+
+    // 로그인된 사용자 정보 요청
+    const res = await fetch(`${userApiUrl}/me`, {
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      alert("로그인 후 이용해주세요.");
+      return;
+    }
+
+    const user = await res.json();
+
+    // 조건: 로그인된 사용자 && 총학생회 && 해당 university_url과 일치
+    if (user.user_type === "council" && user.university_url === universityUrl) {
+      window.location.href = `${partnerApiUrl}/partnerUpdate/${universityUrl}`;
+    } else {
+      alert("해당 대학교 총학생회만 접근할 수 있는 기능입니다.");
+    }
+
+  } catch (error) {
+    console.error("제휴 등록 버튼 클릭 처리 중 오류:", error);
+    alert("요청 처리 중 문제가 발생했습니다.");
+  }
+});
+
 
 let currentCategory = ""; // 선택한 카테고리를 기억하는 변수
 
@@ -338,9 +366,11 @@ function createCard(data) {
   cardContainer.appendChild(cardElement);
 }
 
-//로고 클릭시 postAllData()실행
+//로고 클릭시 메인페이지(council)로 이동
 brandNav.addEventListener('click', function () {
-  fetchpostAllData();
+  const currentUrl = window.location.href;
+  const universityUrl = currentUrl.split("/").pop();
+  window.location.href = `${startApiUrl}/${universityUrl}`;
 });
 
 // university_url 값을 받아오는 함수
