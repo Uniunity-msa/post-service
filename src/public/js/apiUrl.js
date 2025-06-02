@@ -1,4 +1,4 @@
-export const apiUrl = 'http://uniunity'; 
+export const apiUrl = 'http://uniunity.store'; 
 
 export const baseUrls = {
   post: `${apiUrl}/post`,
