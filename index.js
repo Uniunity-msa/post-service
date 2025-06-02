@@ -23,7 +23,7 @@ app.use("/post/css", express.static(path.join(__dirname, "src/public/css")));
 app.use("/post/js", express.static(path.join(__dirname, "src/public/js")));
 
 // EJS 뷰 렌더링 라우터
-app.get("/postform/:university_url", (req, res) => {
+app.get("/post/postform/:university_url", (req, res) => {
   res.render("post/postform", { university_url: req.params.university_url });
 });
 
@@ -31,18 +31,18 @@ app.get("/post/list", (req, res) => {
   res.render("post/communityPost"); // src/views/post/communityPost.ejs
 });
 
-app.get("/postviewer/:post_id", (req, res) => {
+app.get("/post/postviewer/:post_id", (req, res) => {
   res.render("post/postviewer", { post_id: req.params.post_id });
 });
 
 app.get("/post/all/:university_url", (req, res) => {
   res.render("post/post", { university_url: req.params.university_url });
 });
-app.get("/showPostListAll/:university_url", (req, res) => {
+app.get("/post/showPostListAll/:university_url", (req, res) => {
   res.render("post/post", { university_url: req.params.university_url });
 });
 
-app.get("/mypage/community/post/:category", (req, res) => {
+app.get("/post/mypage/community/post/:category", (req, res) => {
   console.log("index.js GET 요청 받음");
   res.render("post/communityPost", { category: req.params.category });
 });
