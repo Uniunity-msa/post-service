@@ -92,9 +92,9 @@ const setLoginHeader = (res) => {
 }
 
 const fetchPostData = async () => {
-    let frontend_url = window.location.href;
-    let category = frontend_url.split('/')[6];
-
+    let paths = window.location.pathname.split('/');
+    let category = paths[paths.length - 1]; // 마지막 segment가 category여야 함
+    console.log("category: ", category);
     const commnunityPostTitle = document.getElementById("community_post_title")
     if (category === '1') {
         commnunityPostTitle.textContent = '내가 작성한 게시글'
