@@ -1,9 +1,8 @@
-// config.js;
-export const apiUrl = 'http://34.22.87.148'; 
+export const apiUrl = 'http://uniunity'; 
 
 export const baseUrls = {
-  post: `${apiUrl}:3000`, // post-service
-  reaction: `${apiUrl}:3002`,   // post-reaction-service
-  user: `${apiUrl}:3004`,     // user-service
-  start: `${apiUrl}:3001` // start-service
+  post: `${apiUrl}/post`,
+  reaction: `${apiUrl}/reaction`,
+  user: `${apiUrl}/auth`,
+  start: `${apiUrl}/start`
 };
