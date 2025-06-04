@@ -5,7 +5,6 @@ const postApiUrl = baseUrls.post;
 const userApiUrl = baseUrls.user;
 const userApiUrl2 = baseUrls.user2;
 const reactionApiUrl = baseUrls.reaction;
-const reactionApiUrl2 = baseUrls.reaction2;
 const partnerApiUrl = baseUrls.partner;
 const startApiUrl = baseUrls.start;
 // 작성자 회원 정보 불러오기
@@ -43,7 +42,7 @@ const setLoginHeader = (res) => {
   if (res && res.user_email) {
     loginStatusBtn.removeAttribute("href"); 
     loginStatusBtn.innerText = "로그아웃";
-    signUpBtn.setAttribute("href", `${reactionApiUrl2}`);
+    signUpBtn.setAttribute("href", `${reactionApiUrl}/mypage`);
     signUpBtn.innerText = "마이페이지"
     // backBtn.setAttribute("href", `${startApiUrl}/council/${university_url}`);
   }
