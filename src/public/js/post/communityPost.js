@@ -1,5 +1,6 @@
 import { baseUrls } from '/post/js/apiUrl.js';
 
+const apiUrl = baseUrls;
 const postApiUrl = baseUrls.post;
 const userApiUrl = baseUrls.user;
 const startApiUrl = baseUrls.start;
@@ -49,39 +50,30 @@ const fetchLoginData = async () => {
 };
 
 const setLoginHeader = (res) => {
-    navBar.setAttribute("href", `${startApiUrl}`);
+    navBar.setAttribute("href", `${apiUrl}/council`);
     if (res.loginStatus) {
         //loginStatusBtn.setAttribute("href", `${userApiUrl}/auth/logout`);
         loginStatusBtn.innerText = "로그아웃"
         loginStatusBtn.onclick = async (e) => {
-            e.preventDefault();
             try {
-
-                //테스트용
-                console.log("[로그아웃] 요청 시작");
-
-                const response = await fetch(`${userServiceUrl}/logout`, {
-                    credentials: "include",
+                const res = await fetch(`${userServiceUrl}/logout`, {
+                  method: "POST",
+                  credentials: "include"
                 });
-
-                if (response.ok) {
-                    const data = await response.json();
-
-                    //테스트용
-                    console.log("[로그아웃] 성공:", data);
-                    
-                    window.location.href = redirectUri;
+            
+                if (res.ok) {
+                  // 로그아웃 성공 시 페이지 새로고침
+                  window.location.reload(); // 또는 window.location.href = "/";
                 } else {
-                    //테스트용
-                    console.warn("[로그아웃] 실패 상태 코드:", response.status);
-
-                    alert("로그아웃 실패");
+                  const data = await res.json();
+                  alert(data.message || "로그아웃에 실패했습니다.");
                 }
-            } catch (err) {
-                console.error("로그아웃 요청 실패:", err);
-            }
+              } catch (err) {
+                console.error("로그아웃 요청 중 오류 발생:", err);
+                alert("서버 오류로 로그아웃에 실패했습니다.");
+              }
         };
-        signUpBtn.setAttribute("href", `${postApiUrl}/council/${res.university_url}`);
+        signUpBtn.setAttribute("href", `${startApiUrl}/${res.university_url || ""}`);
         signUpBtn.innerText = "나의학교"
     }
     else {
