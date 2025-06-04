@@ -1,5 +1,5 @@
 const axios = require('axios');
-const REACTION_SERVICE_URL = 'http://post-reaction-service:3002';
+const REACTION_SERVICE_URL = 'http://post-reaction-service';
 
 const ReactionClient = {
   async getCommentsByPostId(post_id) {
