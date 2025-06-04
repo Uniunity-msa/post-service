@@ -161,7 +161,8 @@ const postController = {
   
   //좋아요, 북마크, 댓글 증가감소
   increaseHeart: async (req, res) => {
-    console.log("🔥 /increaseHeart called", req.body); 
+    console.log("🔥 /increaseHeart called", req.body);
+    const post = new Post(); 
     const { post_id } = req.body;
     const response = await post.increaseHeart(post_id);
     return res.status(200).json(response);
@@ -169,12 +170,14 @@ const postController = {
 
   // 좋아요 수 감소
   decreaseHeart: async (req, res) => {
+    const post = new Post(); 
     const { post_id } = req.body;
     const response = await post.decreaseHeart(post_id);
     return res.status(200).json(response);
 },
   // 스크랩 수 증가
   increaseScrap: async (req, res) => {
+    const post = new Post();
     console.log("🔥 /increaseScrap called", req.body); 
     const { post_id } = req.body;
     const response = await post.increaseScrap(post_id);
@@ -182,6 +185,7 @@ const postController = {
   },
   // 스크랩 수 감소
   decreaseScrap: async (req, res) => {
+    const post = new Post();
     const { post_id } = req.body;
     const response = await post.decreaseScrap(post_id);
     return res.status(200).json(response);
