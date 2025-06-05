@@ -311,11 +311,14 @@ function createCard(data) {
   const cardElement = document.createElement('div');
   cardElement.classList.add('mb-4', 'card');
 
+  // 날짜 포맷: "2025-06-04T16:54:19.000Z" → "2025-06-04"
+  const formattedDate = data.post_date.split("T")[0];
+
   // Fill in the card template with data
   cardElement.innerHTML = `
       <div class="card-body d-flex justify-content-between">
           <div>
-              <div class="small text-muted">${data.post_date}</div>
+              <div class="small text-muted">${formattedDate}</div>
               <h2 class="card-title h4 mt-2">${data.post_title}</h2>
           </div>
           <div>
