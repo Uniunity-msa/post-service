@@ -44,7 +44,7 @@ const fetchLoginData = async () => {
 };
 
 const setLoginHeader = (res) => {
-    navBar.setAttribute("href", `${apiUrl}/council`);
+    navBar.setAttribute("href", `${startApiUrl}`);
     if (res.loginStatus) {
         //loginStatusBtn.setAttribute("href", `${userApiUrl}/auth/logout`);
         loginStatusBtn.innerText = "로그아웃"
