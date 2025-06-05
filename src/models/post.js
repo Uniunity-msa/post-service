@@ -73,8 +73,6 @@ try {
   const response = await new Promise((resolve, reject) => {
     this.channel.consume(tempQueue, async (msg) => {
       if (msg.properties.correlationId === correlationId) {
-        //테스트용
-        console.log('[post-service] CommentRequestQueue 메시지 수신:', msg.content.toString());
            
         const postIds = JSON.parse(msg.content.toString());
         const data = await PostStorage.getMyCommentPost(postIds);
@@ -124,9 +122,6 @@ async getUserHeartList(user_email) {
     const response = await new Promise((resolve, reject) => {
       this.channel.consume(tempQueue, async (msg) => {
         if (msg.properties.correlationId === correlationId) {
-          //테스트용
-        console.log('[post-service] HeartRequestQueue 메시지 수신:', msg.content.toString());
-         
           const postIds = JSON.parse(msg.content.toString());
           const data = await PostStorage.getUserHeartList(postIds);
           resolve(data);
@@ -176,9 +171,6 @@ async getUserScrapList(user_email) {
     const response = await new Promise((resolve, reject) => {
       this.channel.consume(tempQueue, async (msg) => {
         if (msg.properties.correlationId === correlationId) {
-          //테스트용
-        console.log('[post-service] ScrapRequestQueue 메시지 수신:', msg.content.toString());
-         
           const postIds = JSON.parse(msg.content.toString());
           const data = await PostStorage.getUserScrapList(postIds);
           resolve(data);
@@ -254,7 +246,6 @@ async getUserScrapList(user_email) {
       // 게시글 삭제에 성공했을 때만 댓글 삭제 요청
       if (result.result === true) {
         const commentDelete = await ReactionClient.deleteAllCommentsByPostId(postId);
-        console.log("✅ 댓글 삭제 완료:", commentDelete);
       }
 
       return result;
@@ -367,7 +358,6 @@ async getComments(post_id) {
 //start-service 요청 처리: postId, imgUrl 보내기
   async getImagesInfo(university_id) {
     try{
-      console.log('model/post.getImagesInfo 실행');
       const response = await PostStorage.getImagesInfo(university_id);
       return response;
     } catch (err) {

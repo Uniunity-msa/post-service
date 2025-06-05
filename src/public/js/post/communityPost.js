@@ -24,8 +24,6 @@ const fetchLoginData = async () => {
 
         const data = await res.json();
 
-        //테스트용
-        console.log("[로그인 체크] 응답 데이터:", data);
 
         if (!data.loginStatus) {
             alert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
@@ -36,11 +34,7 @@ const fetchLoginData = async () => {
         userInfo = data; // user_email, university_url 등 저장
         setLoginHeader(data);
 
-        
-        // // 현재 경로가 /mypage가 아니면 리다이렉트
-        // if (window.location.pathname !== '/mypage') {
-        //     window.location.href = redirectUri;
-        //  }
+    
     } catch (error) {
         console.error("로그인 정보 확인 실패:", error);
 
@@ -86,7 +80,6 @@ const setLoginHeader = (res) => {
 const fetchPostData = async () => {
     let paths = window.location.pathname.split('/');
     let category = paths[paths.length - 1]; // 마지막 segment가 category여야 함
-    console.log("category: ", category);
     const commnunityPostTitle = document.getElementById("community_post_title")
     if (category === '1') {
         commnunityPostTitle.textContent = '내가 작성한 게시글'
@@ -123,7 +116,6 @@ const fetchPostData = async () => {
 
 function truncateText(elementId, maxLength, data) {
     const element = document.getElementById(elementId);
-    console.log(element)
     if (element) {
         if (data.length > maxLength) {
             element.textContent = data.slice(0, maxLength) + '...';
@@ -155,18 +147,6 @@ function createEmptyCard(data) {
 
 // Function to create a card element with data and append it to the container
 function createCard(data) {
-    // console.log(data)
-    // let post_title = document.getElementById('post_title').textContent = data.post_title;
-    // let post_content = document.getElementById('post_content').textContent = data.post_content;
-    // //게시글 제목이 30자이상이면 나머지 문자열 ...처리
-    // if (data.post_title.length > 30) {
-    //     post_title = truncateText('post_title', 30, data.post_title);
-    // }
-    // //게시글 내용이 100글자 이상이면 나머지 문자열 ...처리
-    // if (data.post_content.length > 100) {
-    //     post_content = truncateText('post_content', 100, data.post_content);
-    // }
-
 
     const cardContainer = document.getElementById('card_container');
 

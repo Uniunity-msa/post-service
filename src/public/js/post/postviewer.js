@@ -19,16 +19,12 @@ const loadloginData = async () => {
     credentials: "include", // 쿠키 포함
   });
 
-  console.log("🔍  응답 상태:", res.status); // 200, 401 등
-  console.log("🔍  응답 OK 여부:", res.ok);
 
   if (!res.ok) {
-    console.log("로그인 안 된 사용자로 감지됨");
     userInfo = null;
     return;
   }
   const data = await res.json();
-  console.log("✅  받아온 유저 정보:", data); // 실제 유저 정보 로그
   userInfo = data; 
   
 };
@@ -41,7 +37,6 @@ const postWriter = async (post_id) => {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    console.log("postWriterInfo (from API):", data); // 지울거ㅓㅓㅓㅓ
     postWriterInfo = data;
     domain = extractDomainFromEmail(postWriterInfo.user_email);
     university_url = domain;
@@ -53,8 +48,6 @@ const postWriter = async (post_id) => {
 // 게시글 수정, 삭제 버튼 보이는 조건
 async function showDeleteButtonIfNeeded() {
   await postWriter(post_id);
-  console.log("🧑‍💻 현재 로그인한 사용자 정보:", userInfo);
-  console.log("📝 게시글 작성자 정보:", postWriterInfo);
   if (
   userInfo &&
   postWriterInfo &&
@@ -89,7 +82,6 @@ const loadPostData = async () => {
     const response = await fetch(url);
     const data = await response.json();
     postInfo = data;
-    console.log("postInfo: ", postInfo);
   
     const postTitle = document.getElementById('post_title');
     const postCategory = document.getElementById('post_category');
@@ -138,7 +130,6 @@ const loadPostData = async () => {
       while ((match = regex.exec(htmlContent)) !== null) {
         imageUrls.push(match[1]);
       }
-      // console.log(imageUrls.length);
       if (imageUrls.length === 0) {
         toggleCarouselButtons(false);
       }
@@ -166,31 +157,6 @@ const loadPostData = async () => {
         }
       }
 
-      // 댓글 개수를 가져오는 함수
-      // async function fetchCommentNum(post_id) {
-      //   try {
-      //     const response = await fetch(`/postCommentNum/${post_id}`);
-      //     if (!response.ok) {
-      //       throw new Error('서버 응답이 올바르지 않습니다.');
-      //     }
-      //     const data = await response.json();
-      //     if (data.status === 200) {
-      //       return data.result; // 댓글 개수를 반환
-      //     } else {
-      //       throw new Error(data.msg);
-      //     }
-      //   } catch (error) {
-      //     console.error('서버 응답 에러:', error);
-      //     return -1; // 에러 발생 시 -1을 반환하거나 에러 처리 방식을 선택
-      //   }
-      // }
-
-
-      // 페이지 로드 후 댓글 개수 표시
-      // window.addEventListener('DOMContentLoaded', function () {
-      //   const post_id = postInfo.post_id;
-      //   displayCommentNum();
-      // });
 
       const viewer = toastui.Editor.factory({
         el: document.querySelector('.toast-custom-viewer'),
@@ -514,16 +480,8 @@ writeCommentBtn.addEventListener('click', function () {
       })
         .then(response => response.json())
         .then(data => { //data.status === 201
-          console.log("🔥 댓글 등록 응답 데이터:", data);
-          console.log("🔥 status:", data.status);
-          console.log("🔥 result:", data.result);
-          if (data.status === 201) {
-            // 등록 성공한 경우, 등록한 댓글을 프론트엔드에 표시
-            // const commentViewer = document.getElementById('comment_content');
-            // const commentElement = document.createElement('p');
-            // commentElement.textContent = commentContent;
-            // commentViewer.appendChild(commentElement);
 
+          if (data.status === 201) {
  
             fetchComments();
             document.querySelector('.comment-form textarea').value = "";
@@ -546,52 +504,6 @@ writeCommentBtn.addEventListener('click', function () {
 });
 
 
-//버튼 학교상징 색으로 바꾸기
-// function setUniversityColor_comment(university_url){
-//     let universityColor
-//     if(university_url==="sungshin"){
-//       universityColor="#6a6fb3"
-//     }else if(university_url==="konkuk"){
-//       universityColor="#004a26"
-//     }else{
-//       universityColor="#FFD400" //Uniunity색상
-//     }
-//     return universityColor;
-//   }
-
-//댓글  불러오기
-// const showCommentListbyPostID = async () => {
-// try {
-
-//   const url = `${apiUrl}/showComment/postviewer/${post_id}`;
-//   const response = await fetch(url);
-//   const res = await response.json();
-//   console.log(res);
-//   commentInfo = res;
-
-//       const commentDate = document.getElementById('comment_date');
-//       const commentContent = document.getElementById('comment_content');
-//       const likeCount = document.getElementById('like_count_comment');
-//       const userEmail = document.getElementById('user_email');
-
-//       commentDate.textContent = commentInfo.comment_date;
-//       commentContent.textContent = commentInfo.comment_content;
-//       likeCount.textContent = `좋아요 ${commentInfo.like_count_comment}개`;
-//       userEmail.textContent = commentInfo.user_email;
-//     } catch (error){
-//       console.error('Error: ');
-//     }
-//   };
-
-
-
-// const changeButtonColorommentViewer = toastui.Editor.factory({
-//     el: document.querySelector('.toast-custom-viewer'),
-//     viewer: true,
-//     height: '1000px',
-//     initialValue: commentInfo.comment_content,
-//   });
-
 //게시글지우기
 const fetchDeletePost = async (post_id, user_email) => {
   try {
@@ -612,7 +524,6 @@ const fetchDeletePost = async (post_id, user_email) => {
       // 삭제 성공 후 추가 작업이 필요하면 이곳에 추가
       window.location.href = `${postApiUrl}/showPostListALL/${userInfo.university_url}`;
     } else {
-      console.error('게시글 삭제 실패:', data.err);
       alert("게시글 삭제에 실패하였습니다.");
     }
   } catch (error) {

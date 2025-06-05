@@ -13,19 +13,13 @@ const loadloginData = async () => {
     credentials: "include", // 쿠키 포함
   });
 
-  console.log("🔍 응답 상태:", res.status);
-  console.log("🔍 응답 OK 여부:", res.ok);
-
   let data = null;
 
   if (res.ok) {
     data = await res.json();
-    console.log("✅ 받아온 유저 정보:", data);
     userInfo = data;
   }
 
-  // 로그인 안 됐어도 null 전달
-  console.log("✅유저정보 ", data);
   return data;
 };
 
@@ -38,21 +32,18 @@ const navBar = document.getElementById("navbar-brand");
 const universityName = document.getElementById("university_name");
 
 const setLoginHeader = (res) => {
-  console.log("🔍 setLoginHeader 실행됨, 전달받은 값:", res);
   if (res && res.user_email) {
     loginStatusBtn.removeAttribute("href"); 
     loginStatusBtn.innerText = "로그아웃";
     signUpBtn.setAttribute("href", `${reactionApiUrl}/mypage`);
     signUpBtn.innerText = "마이페이지"
-    // backBtn.setAttribute("href", `${startApiUrl}/council/${university_url}`);
   }
   else {
-    console.log("🛑 로그인 상태 아님 또는 사용자 정보 없음");
     loginStatusBtn.setAttribute("href", `${userApiUrl}/login`);
     loginStatusBtn.innerText = "로그인"
     signUpBtn.setAttribute("href", `${userApiUrl2}/agreement`);
     signUpBtn.innerText = "회원가입"
-    // backBtn.setAttribute("href", `${startApiUrl}/council/${university_url}`);
+
   }
 
 }
@@ -68,7 +59,6 @@ writePostBtn.addEventListener('click', async function () {
 
     // 2. 응답이 실패면 로그인 안 된 상태 → 알림 후 종료
     if (!res.ok) {
-      console.log("로그인이 필요한 서비스입니다"); // 콘솔 출력
       alert("로그인 후에 게시글을 작성할 수 있습니다."); // 사용자에게 알림
       return;
     }
@@ -116,7 +106,6 @@ function getUniversityName() {
       return res.json();
     })
     .then(res => {
-      console.log(res);
       // Uniname.push(res);
       universityName.textContent = res;
     })
@@ -218,8 +207,7 @@ const fetchpostAllData = async () => {
   // 데이터의 총 개수를 가져온 뒤, 페이지 수를 계산
   const remainder = dataLength % postsPerPage;
   let quotient = (dataLength - remainder) / postsPerPage;
-  // console.log("나머지: " + remainder);
-  // console.log("몫: " + quotient);
+
   if (remainder > 0) {
     quotient = quotient + 1;
   }
@@ -240,7 +228,6 @@ const fetchpostAllData = async () => {
   const cardContainer = document.getElementById("card_container");
 
   if (!cardContainer) {
-    //console.error("card_container is null.");
     return;
   }
 
@@ -317,17 +304,6 @@ const fetchPosts = async (category, university_url) => {
 };
 
 function createCard(data) {
-  // console.log(data)
-  // let post_title = document.getElementById('post_title').textContent = data.post_title;
-  // let post_content = document.getElementById('post_content').textContent = data.post_content;
-  // //게시글 제목이 30자이상이면 나머지 문자열 ...처리
-  // if (data.post_title.length > 30) {
-  //     post_title = truncateText('post_title', 30, data.post_title);
-  // }
-  // //게시글 내용이 100글자 이상이면 나머지 문자열 ...처리
-  // if (data.post_content.length > 100) {
-  //     post_content = truncateText('post_content', 100, data.post_content);
-  // }
 
   const cardContainer = document.getElementById('card_container');
 
@@ -442,7 +418,6 @@ window.addEventListener('DOMContentLoaded', async function () {
   getUniversityName();
   
   const loginUser = await loadloginData(); 
-  console.log("✅ 로그인 유저 정보:", loginUser); 
   setLoginHeader(loginUser);// null이어도 작동하도록
 
 
@@ -598,50 +573,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   })
 })
-// document.addEventListener('DOMContentLoaded', function() {
-//   var newer = document.getElementById('newer');
-//   var older = document.getElementById('older');
-//   var currentPage = 2; // Assume you have defined currentPage somewhere.
-
-//   if (newer) {
-//     newer.addEventListener('click', function() {
-//       if (currentPage >= 2) {
-//         goToPrevPage();
-//       }
-//     });
-//   } else {
-//     console.error("Element with id 'newer' not found.");
-//   }
-
-//   if (older) {
-//     older.addEventListener('click', function() {
-//       if (currentPage <= 14) {
-//         goToNextPage();
-//       }
-//     });
-//   } else {
-//     console.error("Element with id 'older' not found.");
-//   }
-// });
-
-// const fetchPosts = async (category, university_url) => {
-//   console.log("currentCategory " + currentCategory);
-//   if (currentCategory === "") { // 카테고리 선택 안 했으면 모든 게시글 로드하도록
-//     fetchpostAllData();
-//     return;
-//   }
-
-//   const startIndex = (currentPage - 1) * postsPerPage;
-//   const endIndex = startIndex + postsPerPage;
-
-//   const card_container = document.getElementById("card_container");
-
-//   if (!card_container) {
-//     console.error("card_container is null.");
-//     return;
-//   }
-
-
 
 //조회수증가코드!!
 // read more버튼 누르면 조회수 1 증가 -> db에 요청
@@ -670,13 +601,12 @@ document.addEventListener('DOMContentLoaded', () => {
   if (loginStatusBtn) {
     loginStatusBtn.addEventListener("click", async (e) => {
       const text = loginStatusBtn.innerText.trim(); // 공백 제거한 텍스트 확인
-      console.log("🔍 현재 버튼 텍스트:", text);
 
       if (text === "로그아웃") {
         e.preventDefault(); // 로그아웃일 때만 이동 막기
 
         try {
-          const res = await fetch(`${userApiUrl}/auth/logout`, {
+          const res = await fetch(`${userApiUrl}/logout`, {
             method: "POST",
             credentials: "include"
           });

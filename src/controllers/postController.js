@@ -3,8 +3,7 @@
 const Post = require("../models/post");
 
 const { fetchUserInfoFromUserService } = require("../utils/userClient");
-// const post = new Post();
-const postWithRabbitMQ = new Post(); // 전역 인스턴스
+const postWithRabbitMQ = new Post();
 const { sendUniversityURL, receiveUniversityData } = require("../rabbit/rabbitMQ");
 
 // 서버 시작할 때 RabbitMQ 연결해두기
@@ -14,11 +13,6 @@ postWithRabbitMQ.connectToRabbitMQ()
 
   
 const postController = {
-  // uploadPost: async (req, res) => {
-  //   const post = new Post(req.body);
-  //   const response = await post.createPost();
-  //   return res.json(response);
-  // },
 
   // 게시글 업로드
   uploadPost: async (req, res) => {
@@ -48,12 +42,9 @@ const postController = {
 
   getUniversityName: async (req, res) => {
     try {
-       console.log("✅ 받은 req.body:", req.body); // 여기에 찍히는지 먼저 확인
             const university_url = req.body.university_url;
-
             await sendUniversityURL(university_url, 'SendUniversityName');
             const data = await receiveUniversityData('RecvPostUniversityName')
-            console.log(data.university_name);
             return res.json(data.university_name);
     }catch (err) {
             console.error('getUniversityName error:', err);
@@ -65,7 +56,6 @@ const postController = {
   postAll: async (req, res) => {
       try {
       const university_url = req.params.university_url;
-
       // MQ로 university_id 받아오기
       await sendUniversityURL(university_url, 'SendUniversityID');
       const rawData = await receiveUniversityData('RecvPostUniversityID');
@@ -124,7 +114,6 @@ const postController = {
       const data = typeof rawData === 'number'
         ? { university_id: rawData }
         : rawData
-      console.log("[showPostListbyCategory]university_id: ", data.university_id);
       const post = new Post();
       const response = await post.showPostListbyCategory(data.university_id, mappedCategory);
       return res.json(response);
@@ -161,7 +150,6 @@ const postController = {
   
   //좋아요, 북마크, 댓글 증가감소
   increaseHeart: async (req, res) => {
-    console.log("🔥 /increaseHeart called", req.body);
     const post = new Post(); 
     const { post_id } = req.body;
     const response = await post.increaseHeart(post_id);
@@ -178,7 +166,6 @@ const postController = {
   // 스크랩 수 증가
   increaseScrap: async (req, res) => {
     const post = new Post();
-    console.log("🔥 /increaseScrap called", req.body); 
     const { post_id } = req.body;
     const response = await post.increaseScrap(post_id);
     return res.status(200).json(response);
@@ -209,16 +196,12 @@ const postController = {
   // 마이페이지 → 내가 작성한 글 / 댓글 단 글 / 좋아요 / 스크랩 글 조회
   myCommunityPostData: async (req, res) => {
     try {
-      console.log("컨트롤러 호출됨");
       if (!postWithRabbitMQ.channel) {
-        console.log("채널이 초기화되지 않아 connectToRabbitMQ() 호출");
         await postWithRabbitMQ.connectToRabbitMQ();
       }  
       // 쿠키를 통해 사용자 정보 가져오기
       const user = await fetchUserInfoFromUserService(req.headers.cookie);
       const user_email = user.user_email;
-      console.log("user_email");
-      console.log(user_email);
       let response;
       if (req.params.category === '1') {
         response = await postWithRabbitMQ.myCommunityPost(user_email);
@@ -231,8 +214,6 @@ const postController = {
       } else {
         return res.status(400).json({ error: 'Invalid category' });
       }
-      console.log("response");
-      console.log(response);
       return res.json(response);
     } catch (err) {
       console.error('myCommunityPostData error:', err);

@@ -13,15 +13,11 @@ const loadloginData = async () => {
     credentials: "include", // 쿠키 포함
   });
 
-  console.log("🔍  응답 상태:", res.status); // 200, 401 등
-  console.log("🔍  응답 OK 여부:", res.ok);
-
   if (!res.ok) {
     alert("로그인이 필요합니다.");
     return;
   }
   const data = await res.json();
-  console.log("✅  받아온 유저 정보:", data); // 실제 유저 정보 로그
   userInfo = data; 
   
   setSelectCategory(userInfo.user_type);
@@ -113,7 +109,6 @@ const setSelectCategory = (user_type) => {
   defaultOption.text = "글 카테고리를 선택해주세요";
   defaultOption.selected = true;
   selectElement.appendChild(defaultOption);
-  console.log("🎯 현재 user_type:", user_type);
   if (user_type === "student") {
     const options = ["제휴 추천", "잡담"];
     const values = ["제휴 추천", "잡담"];
@@ -161,7 +156,6 @@ function uploadPost(postCategory) {
     category: postCategory,
     university_id: userInfo.university_id
   };
-  console.log(req);
 
   fetch(`${postApiUrl}/uploadPost`, {
     method: "POST",
@@ -173,7 +167,6 @@ function uploadPost(postCategory) {
     .then(async (res) => {
     const data = await res.json();
       if (res.status === 201) {
-        console.log("게시글 작성 완료");
         window.location.href = `/post/all/${userInfo.university_url}`; // 리다이렉션 처리
       } else {
         alert("서버의 문제로 게시글 작성이 실패했습니다. 다시 시도해주세요.");
@@ -203,7 +196,6 @@ function modifyPost(postId,postCategory){
     .then((res) => res.json())
     .then(res => {
       if (res.status === 201) {
-        console.log("게시글 수정 완료");
         window.location.href = `/postviewer/${postId}`; // 리다이렉션 처리
       } else {
         alert("서버의 문제로 게시글 수정이 실패했습니다. 다시 시도해주세요.");
@@ -218,7 +210,6 @@ function modifyPost(postId,postCategory){
 
 selectPostCategoryElement.addEventListener('change', function () {
   selectedValue = this.value;
-  console.log(selectedValue)
   // 제휴가게 등록하기 로드
   if (selectedValue == "제휴 등록") {
     postWrite.style.display = "none";
@@ -387,7 +378,6 @@ const loadPostData = async (post_id) => {
     const response = await fetch(url);
     const data = await response.json();
     postInfo = data;
-    console.log(postInfo);
     postTitle.value = postInfo.post_title;
     generateEditor(postInfo.post_content);
     const selectedCategory = postInfo.category;

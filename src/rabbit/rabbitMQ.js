@@ -14,7 +14,6 @@ const RETRY_DELAY = 2000; // 2초
 
 async function connectRabbitMQ() {
   const rabbitUrl = process.env.RABBIT || 'amqp://guest:guest@rabbitmq:5672';
-  console.log(" RabbitMQ 연결 주소:", rabbitUrl);
   for (let i = 0; i < RETRY_COUNT; i++) {
     try {
       const connection = await amqp.connect(rabbitUrl);
@@ -89,21 +88,20 @@ async function receiveUniversityData(queueName) {
 async function consumePostListRequest(callback) {
     try {
     if (!channel) {
-      console.log("[start] RabbitMQ 채널 없음 → 연결 시도");
+      console.log("RabbitMQ 채널 없음 → 연결 시도");
       await connectRabbitMQ();
     }
 
     const queueName = 'SendPostList';
     await channel.assertQueue(queueName, { durable: false });
-    console.log(`[start] 큐 구독 시작: ${queueName}`);
 
     channel.consume(queueName, async (msg) => {
       if (msg !== null) {
-        console.log("[start] 메시지 수신됨");
+        console.log("메시지 수신됨");
 
         try {
           const { university_id } = JSON.parse(msg.content.toString());
-          console.log(`[start]  게시글 목록 요청 수신 → university_id=${university_id}`);
+          console.log(`게시글 목록 요청 수신 → university_id=${university_id}`);
 
           // 컨트롤러 없이 직접 DB 접근
           const result = await require('../models/postStorage').getImagesInfo(university_id);
@@ -112,7 +110,7 @@ async function consumePostListRequest(callback) {
           const correlationId = msg.properties.correlationId || null;
 
           if (!replyQueue) {
-            console.error("[start]  replyTo가 undefined입니다. 응답 보낼 큐가 없습니다.");
+            console.error("replyTo가 undefined입니다. 응답 보낼 큐가 없습니다.");
             return;
           }
 
@@ -121,20 +119,19 @@ async function consumePostListRequest(callback) {
             Buffer.from(JSON.stringify(result)),
             { correlationId }
           );
-          console.log(`[start]  응답 전송 완료 → replyTo=${replyQueue}, correlationId=${correlationId}`);
-
+        
           channel.ack(msg);
-          console.log("[start]  메시지 ack 완료");
+ 
         } catch (err) {
-          console.error("[start]  메시지 처리 중 에러:", err);
+          console.error(" 메시지 처리 중 에러:", err);
         }
 
       } else {
-        console.warn("[start] ❕ null 메시지 수신됨 → 무시함");
+        console.warn(" null 메시지 수신됨 → 무시함");
       }
     });
   } catch (err) {
-    console.error("[start]  consumePostListRequest 초기화 중 에러:", err);
+    console.error("consumePostListRequest 초기화 중 에러:", err);
   }
 }
 
