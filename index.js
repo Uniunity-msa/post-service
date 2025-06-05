@@ -4,6 +4,47 @@ const postRouter = require("./src/routes/postRoutes");
 const app = express();
 const PORT = 3000;
 
+const mysql = require('mysql2/promise');
+const amqp = require('amqplib');
+
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK' });
+});
+
+// Readiness Probe용 엔드포인트: DB & RabbitMQ 연결 검사
+app.get('/ready', async (req, res) => {
+  try {
+    // MySQL 연결 검사
+    const dbConn = await mysql.createConnection({
+      host: process.env.MYSQL_HOST,
+      port: process.env.MYSQL_PORT,
+      user: process.env.MYSQL_USER,
+      password: process.env.MYSQL_PASSWORD,
+      database: process.env.MYSQL_DATABASE,
+      connectTimeout: 2000  // 연결 타임아웃 2초
+    });
+
+    // 간단한 쿼리로 DB ping 대체 (SELECT 1)
+    await dbConn.execute('SELECT 1');
+    await dbConn.end();
+
+    // 2) RabbitMQ 연결 검사
+    // 아래 URL 형식: amqp://user:password@host:port
+    const rabbitUrl = `amqp://${process.env.RABBITMQ_USER}:${process.env.RABBITMQ_PASSWORD}@${process.env.RABBITMQ_HOST}:${process.env.RABBITMQ_PORT}`;
+    const rabbitConn = await amqp.connect(rabbitUrl, { timeout: 2000 }); 
+    // 채널을 열었다가 바로 닫으면 연결 상태 확인 가능
+    const channel = await rabbitConn.createChannel();
+    await channel.close();
+    await rabbitConn.close();
+
+    // 둘 다 성공하면 READY
+    res.status(200).json({ status: 'READY' });
+  } catch (err) {
+    console.error('Readiness check failed:', err.message);
+    res.status(500).json({ status: 'NOT_READY', error: err.message });
+  }
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
