@@ -98,7 +98,7 @@ const loadPostData = async () => {
 
     postTitle.textContent = postInfo.post_title;
     postCategory.textContent = postInfo.category;
-    postDate.textContent = postInfo.post_date;
+    postDate.textContent = postInfo.post_date?.split("T")[0] || ""; //날짜 형식 수정
     postContent.textContent = postInfo.post_content;
     viewCount.innerHTML = `<img width="24" height="24" src="https://img.icons8.com/external-yogi-aprelliyanto-flat-yogi-aprelliyanto/32/external-click-marketing-and-seo-yogi-aprelliyanto-flat-yogi-aprelliyanto.png" style="margin-right: 0.3rem;" alt="external-click-marketing-and-seo-yogi-aprelliyanto-flat-yogi-aprelliyanto"/> ${postInfo.view_count}`;
     likeCount.innerHTML = `<img width="24" height="24" src="https://img.icons8.com/color/48/filled-like.png" id="like_img" style="margin-right: 0.3rem;" alt="filled-like" /> ${postInfo.like_count}`;
