@@ -200,11 +200,8 @@ const postController = {
         await postWithRabbitMQ.connectToRabbitMQ();
       }  
       // 쿠키를 통해 사용자 정보 가져오기
-      // const user = await fetchUserInfoFromUserService(req.headers.cookie);
-      // const user_email = user.user_email;
-
-      // 테스트용 하드코딩
-      const user_email = "student@sungshin.ac.kr";
+      const user = await fetchUserInfoFromUserService(req.headers.cookie);
+      const user_email = user.user_email;
       let response;
       if (req.params.category === '1') {
         response = await postWithRabbitMQ.myCommunityPost(user_email);
