@@ -507,7 +507,7 @@ writeCommentBtn.addEventListener('click', function () {
 //게시글지우기
 const fetchDeletePost = async (post_id, user_email) => {
   try {
-    const response = await fetch(`/deletePost/${post_id}/${user_email}`, {
+    const response = await fetch(`${postApiUrl}/deletePost/${post_id}/${user_email}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'
