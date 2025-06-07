@@ -125,12 +125,18 @@ async function consumePostListRequest(callback) {
             return;
           }
 
+          // result 안에 correlationId를 함께 포함시켜 보냄
+          const fullResponse = {
+            post_info: result,
+            correlationId: correlationId
+          };
+
           channel.sendToQueue(
             replyQueue,
-            Buffer.from(JSON.stringify(result)),
+            Buffer.from(JSON.stringify(fullResponse)),
             { correlationId }
           );
-        
+          console.log("✅ [post-service] 응답 전송 완료");
           channel.ack(msg);
  
         } catch (err) {
