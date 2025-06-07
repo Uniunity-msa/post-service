@@ -127,7 +127,7 @@ async function consumePostListRequest(callback) {
 
           // result 안에 correlationId를 함께 포함시켜 보냄
           const fullResponse = {
-            post_info: result,
+            post_info: result.post_info,
             correlationId: correlationId
           };
 
