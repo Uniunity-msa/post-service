@@ -114,9 +114,11 @@ async function consumePostListRequest(callback) {
 
           // 컨트롤러 없이 직접 DB 접근
           const result = await require('../models/postStorage').getImagesInfo(university_id);
-
+          console.log("result: ",result);
           const replyQueue = msg.properties.replyTo;
+          console.log("replyQueue",replyQueue);
           const correlationId = msg.properties.correlationId || null;
+          console.log("correlationId: ",correlationId);
 
           if (!replyQueue) {
             console.error("replyTo가 undefined입니다. 응답 보낼 큐가 없습니다.");
