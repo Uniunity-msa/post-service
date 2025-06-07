@@ -130,7 +130,7 @@ async function consumePostListRequest(callback) {
               result: result.post_info,  
               correlationId
             };
-
+          console.log("📦 fullResponse to send:", JSON.stringify(fullResponse, null, 2));
           channel.sendToQueue(
             replyQueue,
             Buffer.from(JSON.stringify(fullResponse)),
