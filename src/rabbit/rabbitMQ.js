@@ -82,8 +82,6 @@ async function receiveUniversityData(queueName, correlationId) {
         channel.ack(msg);  // 처리 완료된 메시지에 대해 ack
         return data;
       }
-      // 응답을 찾지 못한 경우 해당 메시지를 다시 큐에 넣기
-      channel.nack(msg, false, true);
     }
     // 메시지가 없으면 300ms 대기 후 재시도
     await new Promise(resolve => setTimeout(resolve, 300));
