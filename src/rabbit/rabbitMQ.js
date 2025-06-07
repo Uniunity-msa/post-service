@@ -12,6 +12,10 @@ let channel;
 const RETRY_COUNT = 10;
 const RETRY_DELAY = 2000; // 2초
 
+function generateCorrelationId() {
+  return `corr-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+}
+
 async function connectRabbitMQ() {
   const rabbitUrl = process.env.RABBIT || 'amqp://guest:guest@rabbitmq:5672';
   for (let i = 0; i < RETRY_COUNT; i++) {
@@ -39,7 +43,7 @@ async function connectRabbitMQ() {
 }
 
 // university_url을 전송
-async function sendUniversityURL(university_url, sendQueueName) {
+async function sendUniversityURL(university_url, sendQueueName, correlationId) {
   if (!channel) await connectRabbitMQ();
   let recvQueueName;
   if(sendQueueName == 'SendUniversityName'){
@@ -55,12 +59,13 @@ async function sendUniversityURL(university_url, sendQueueName) {
     Buffer.from(JSON.stringify({ university_url })),
     {
       replyTo: recvQueueName,
+      correlationId: correlationId,
     }
   );
 }
 
 // university data 수신
-async function receiveUniversityData(queueName) {
+async function receiveUniversityData(queueName, correlationId) {
   if (!channel) await connectRabbitMQ();
 
   if (!RECV_QUEUES.includes(queueName)) {
@@ -72,9 +77,13 @@ async function receiveUniversityData(queueName) {
     const msg = await channel.get(queueName, { noAck: false });
     if (msg) {
       const data = JSON.parse(msg.content.toString());
-      console.log(`[post] ${queueName} 수신:`, data);
-      channel.ack(msg);
-      return data;
+      // 요청 ID(correlationId)를 확인하여 응답을 매칭
+      if (data.correlationId === correlationId) {
+        channel.ack(msg);  // 처리 완료된 메시지에 대해 ack
+        return data;
+      }
+      // 응답을 찾지 못한 경우 해당 메시지를 다시 큐에 넣기
+      channel.nack(msg, false, true);
     }
     // 메시지가 없으면 300ms 대기 후 재시도
     await new Promise(resolve => setTimeout(resolve, 300));
@@ -139,4 +148,5 @@ module.exports = {
   sendUniversityURL,
   receiveUniversityData,
   consumePostListRequest,
+  generateCorrelationId,
 };

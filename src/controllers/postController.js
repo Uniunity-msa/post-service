@@ -4,7 +4,7 @@ const Post = require("../models/post");
 
 const { fetchUserInfoFromUserService } = require("../utils/userClient");
 const postWithRabbitMQ = new Post();
-const { sendUniversityURL, receiveUniversityData } = require("../rabbit/rabbitMQ");
+const { sendUniversityURL, receiveUniversityData, generateCorrelationId } = require("../rabbit/rabbitMQ");
 
 // 서버 시작할 때 RabbitMQ 연결해두기
 postWithRabbitMQ.connectToRabbitMQ()
@@ -43,8 +43,9 @@ const postController = {
   getUniversityName: async (req, res) => {
     try {
             const university_url = req.body.university_url;
-            await sendUniversityURL(university_url, 'SendUniversityName');
-            const data = await receiveUniversityData('RecvPostUniversityName')
+            const correlationId = generateCorrelationId();
+            await sendUniversityURL(university_url, 'SendUniversityName', correlationId);
+            const data = await receiveUniversityData('RecvPostUniversityName', correlationId)
             return res.json(data.university_name);
     }catch (err) {
             console.error('getUniversityName error:', err);
@@ -56,14 +57,16 @@ const postController = {
   postAll: async (req, res) => {
       try {
       const university_url = req.params.university_url;
+      const correlationId = generateCorrelationId();
       // MQ로 university_id 받아오기
-      await sendUniversityURL(university_url, 'SendUniversityID');
-      const rawData = await receiveUniversityData('RecvPostUniversityID');
+      await sendUniversityURL(university_url, 'SendUniversityID', correlationId);
+      const rawData = await receiveUniversityData('RecvPostUniversityID', correlationId);
+      console.log("rawData:", rawData);
       // 숫자면 객체로 감싸기
-      const data = typeof rawData === 'number'
-        ? { university_id: rawData }
-        : rawData;
-
+      const data = typeof rawData.university_id === 'number'
+        ? { university_id: rawData.university_id }
+        : rawData.university_id;
+      console.log("rawData.university_id:", rawData.university_id);
       console.log("[postall]university_id: ", data.university_id);
 
       const post = new Post();
@@ -105,15 +108,15 @@ const postController = {
 
     try {
       const university_url = req.params.university_url;
-
+      const correlationId = generateCorrelationId();
       // MQ로 university_id 받아오기
-      await sendUniversityURL(university_url, 'SendUniversityID');
-      const rawData = await receiveUniversityData('RecvPostUniversityID');
+      await sendUniversityURL(university_url, 'SendUniversityID', correlationId);
+      const rawData = await receiveUniversityData('RecvPostUniversityID', correlationId);
       
       // 숫자면 객체로 감싸기
-      const data = typeof rawData === 'number'
-        ? { university_id: rawData }
-        : rawData
+      const data = typeof rawData.university_id === 'number'
+        ? { university_id: rawData.university_id }
+        : rawData.university_id
       const post = new Post();
       const response = await post.showPostListbyCategory(data.university_id, mappedCategory);
       return res.json(response);
