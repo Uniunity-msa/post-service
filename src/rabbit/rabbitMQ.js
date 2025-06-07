@@ -128,7 +128,7 @@ async function consumePostListRequest(callback) {
           channel.sendToQueue(
             replyQueue,
             Buffer.from(JSON.stringify(result)),
-            { correlationId }
+            // { correlationId }
           );
         
           channel.ack(msg);
