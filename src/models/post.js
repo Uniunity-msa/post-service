@@ -88,7 +88,7 @@ try {
       }
     );
   });
-
+  console.log("myCommunityCommentPost 실행 : 내가 댓글 단 게시글 불러오기 => ", response);
   return response;
 
 } catch (err) {
@@ -135,7 +135,7 @@ async getUserHeartList(user_email) {
         persistent: true,
       });
     });
-
+    console.log("getUserHeartList 실행 : 내가 좋아요 누른 게시글 불러오기 => ", response);
     return response;
 
   } catch (err) {
@@ -184,7 +184,7 @@ async getUserScrapList(user_email) {
         persistent: true,
       });
     });
-
+    console.log("getUserScrapList 실행 : 내가 스크랩한 게시글 불러오기 => ", response);
     return response;
 
   } catch (err) {
@@ -294,6 +294,7 @@ async getUserScrapList(user_email) {
    async myCommunityPost(user_email) {
     try {
         const response = await PostStorage.getMyPost(user_email);
+        console.log("myCommunityPost 실행 : 내가 작성한 게시글 불러오기 => ", response);
         return response;
     } catch (err) {
         return {
